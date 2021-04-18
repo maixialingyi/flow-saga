@@ -36,6 +36,11 @@ public class BaseSagaTransactionHandler {
     private RuntimeSagaTransactionExceptionHandlerDispatcher runtimeSagaTransactionExceptionHandlerDispatcher;
 
     public void commit(SagaTransactionContext sagaTransactionContext) {
+        // 如果不是最外层事务，就直接返回，不提交事务。
+        if (!isLastTransaction(sagaTransactionContext)) {
+            return;
+        }
+
         // 提交事务
         SagaTransactionEntity sagaTransactionEntity = sagaTransactionContext.getSagaTransactionEntity();
         sagaTransactionEntity.success();

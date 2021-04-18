@@ -13,10 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author: songzeqi
- * @Date: 2019-07-16 11:30 AM
- */
 @Slf4j
 @Component
 public class RuntimeSagaTransactionExceptionHandlerDispatcher implements RuntimeSagaTransactionExceptionHandler {
