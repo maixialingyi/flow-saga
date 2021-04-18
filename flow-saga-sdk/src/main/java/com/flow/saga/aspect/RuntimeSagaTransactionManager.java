@@ -30,6 +30,7 @@ public class RuntimeSagaTransactionManager extends BaseSagaTransactionHandler im
                     sagaTransactionEntity.getBizSerialNo());
             return;
         }
+        //异常打日志，不影响业务流程
         super.saveSagaTransaction(sagaTransactionEntity);
 
         // 调用被代理类的方法执行流程

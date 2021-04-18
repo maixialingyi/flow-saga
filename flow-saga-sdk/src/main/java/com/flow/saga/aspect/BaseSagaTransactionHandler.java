@@ -44,7 +44,9 @@ public class BaseSagaTransactionHandler {
         // 提交事务
         SagaTransactionEntity sagaTransactionEntity = sagaTransactionContext.getSagaTransactionEntity();
         sagaTransactionEntity.success();
+        // 执行事务成功后方法
         this.successTransactionProcess(sagaTransactionEntity);
+        // 修改数据库状态为执行成功
         this.updateSagaTransaction(sagaTransactionEntity);
         log.debug("[RuntimeSagaTransactionProcess]流程{}结束, 流程类型{}, 业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
@@ -191,8 +193,7 @@ public class BaseSagaTransactionHandler {
                 return;
             }
             Object service = BeanUtil.getBean(successInvocation.getTargetClass());
-            ReflectionUtils.invokeMethod(successInvocation.getMethod(), service,
-                    sagaTransactionEntity.getAndConstructParamValues());
+            ReflectionUtils.invokeMethod(successInvocation.getMethod(), service,sagaTransactionEntity.getAndConstructParamValues());
         } catch (Exception e) {
             log.error("[RuntimeSagaTransactionProcess]流程{}, 框架处理成功，执行成功方法失败, 流程类型{}, 业务流水号:{}",
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
@@ -262,8 +263,7 @@ public class BaseSagaTransactionHandler {
     }
 
     void updateSagaTransaction(SagaTransactionEntity sagaTransactionEntity) {
-        List<SagaSubTransactionEntity> sagaSubTransactionEntities = sagaTransactionEntity
-                .getSagaSubTransactionEntities();
+        List<SagaSubTransactionEntity> sagaSubTransactionEntities = sagaTransactionEntity.getSagaSubTransactionEntities();
 
         // 业务流程执行成功时，不保存入参到DB
         if (sagaTransactionEntity.isFinish()) {

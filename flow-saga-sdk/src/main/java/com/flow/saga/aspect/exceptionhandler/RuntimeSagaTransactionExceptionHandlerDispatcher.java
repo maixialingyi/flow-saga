@@ -20,8 +20,7 @@ public class RuntimeSagaTransactionExceptionHandlerDispatcher implements Runtime
     @Autowired
     private List<RuntimeSagaTransactionExceptionHandler> runtimeSagaFlowExceptionHandlerList;
 
-    private Map<SagaTransactionTypeEnum, RuntimeSagaTransactionExceptionHandler> runtimeSagaFlowExceptionHandlerMap = Maps
-            .newHashMap();
+    private Map<SagaTransactionTypeEnum, RuntimeSagaTransactionExceptionHandler> runtimeSagaFlowExceptionHandlerMap = Maps.newHashMap();
 
     @Override
     public void handleException(SagaTransactionContext context, Exception e) {

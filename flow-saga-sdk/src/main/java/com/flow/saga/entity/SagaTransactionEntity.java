@@ -289,11 +289,9 @@ public class SagaTransactionEntity {
         Class<?> targetClass = Thread.currentThread().getContextClassLoader().loadClass(sagaTransactionClassName);
         for (Method method : targetClass.getDeclaredMethods()) {
             if (method.isAnnotationPresent(SagaTransactionSuccess.class)) {
-                SagaTransactionSuccess runtimeSagaTransactionSuccess = method
-                        .getAnnotation(SagaTransactionSuccess.class);
-                if (runtimeSagaTransactionSuccess.sagaTransactionName().equals(sagaTransactionName)) {
-                    successInvocationContext = new InvocationContext(targetClass, method,
-                            this.getAndConstructParamTypes());
+                SagaTransactionSuccess sagaTransactionSuccess = method.getAnnotation(SagaTransactionSuccess.class);
+                if (sagaTransactionSuccess.sagaTransactionName().equals(sagaTransactionName)) {
+                    successInvocationContext = new InvocationContext(targetClass, method,this.getAndConstructParamTypes());
                 }
             }
         }

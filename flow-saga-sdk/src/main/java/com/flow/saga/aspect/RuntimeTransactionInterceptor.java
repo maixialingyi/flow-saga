@@ -31,7 +31,7 @@ public class RuntimeTransactionInterceptor{
         SagaTransactionContext sagaTransactionContext = this.initSagaTransactionContext(joinPoint, runtimeSagaTransactionProcess, recover);
 
         try {
-            // 开始事务，保存saga log
+            //保存saga log
             runtimeSagaTransactionManager.begin(sagaTransactionContext);
             // 执行业务流程
             Object returnValue = joinPoint.proceed();
@@ -39,8 +39,8 @@ public class RuntimeTransactionInterceptor{
             runtimeSagaTransactionManager.commit(sagaTransactionContext);
             return returnValue;
         } catch (Throwable e) {
+            // 处理事务回滚
             if (e instanceof Exception) {
-                // 处理事务回滚
                 runtimeSagaTransactionManager.handleException(sagaTransactionContext, (Exception) e);
             } else {
                 runtimeSagaTransactionManager.handleException(sagaTransactionContext,  new Exception(e));
