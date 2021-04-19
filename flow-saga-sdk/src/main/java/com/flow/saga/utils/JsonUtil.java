@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  *Json转换工具类
  */
-public abstract class JsonUtil {
+public class JsonUtil {
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	/** 对象映射  */
 	private static final ObjectMapper objMapper = new ObjectMapper();

@@ -6,16 +6,10 @@ import com.flow.saga.entity.SagaTransactionEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-/**
- * @author: songzeqi
- * @Date: 2019-07-18 5:03 PM
- */
-
 @Slf4j
 @Component
-public class RuntimeSagaTransactionManager extends BaseSagaTransactionHandler implements ISagaTransactionHandler {
+public class RuntimeSagaTransactionManager extends BaseSagaTransactionHandler {
 
-    @Override
     public void begin(SagaTransactionContext context) {
 
         SagaTransactionContextHolder.putSagaTransactionContext(context);
@@ -39,7 +33,6 @@ public class RuntimeSagaTransactionManager extends BaseSagaTransactionHandler im
                 sagaTransactionEntity.getBizSerialNo());
     }
 
-    @Override
     public void release(SagaTransactionContext context) {
         if (context == null) {
             return;

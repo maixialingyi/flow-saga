@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flow.saga.repository.mapper.SagaTransactionEntityMapper">
+  <resultMap id="BaseResultMap" type="com.flow.saga.entity.SagaTransactionEntity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="shard_routing_key" jdbcType="BIGINT" property="shardRoutingKey" />
+    <result column="saga_transaction_name" jdbcType="VARCHAR" property="sagaTransactionName" />
+    <result column="biz_serial_no" jdbcType="VARCHAR" property="bizSerialNo" />
+    <result column="saga_transaction_class_name" jdbcType="VARCHAR" property="sagaTransactionClassName" />
+    <result column="saga_transaction_class_method_name" jdbcType="VARCHAR" property="sagaTransactionClassMethodName" />
+    <result column="transaction_status" jdbcType="INTEGER" property="transactionStatus" />
+    <result column="retry_time" jdbcType="INTEGER" property="retryTime" />
+    <result column="saga_transaction_type" jdbcType="INTEGER" property="sagaTransactionType" />
+    <result column="recover" jdbcType="INTEGER" property="recover" />
+    <result column="error_msg" jdbcType="VARCHAR" property="errorMsg"/>
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+    <result column="param_json" jdbcType="LONGVARCHAR" property="paramJson" />
+    <result column="param_type_json" jdbcType="LONGVARCHAR" property="paramTypeJson" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, shard_routing_key, saga_transaction_name, biz_serial_no, saga_transaction_class_name, saga_transaction_class_method_name, transaction_status,
+    retry_time, saga_transaction_type, recover, saga_type, error_msg, version, create_time, update_time, param_json, param_type_json
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from saga_transaction_log
+    where id = #{id,jdbcType=BIGINT}
+    and shard_routing_key = #{shardRoutingKey,jdbcType=BIGINT}
+  </select>
+
+  <insert id="insert" parameterType="com.flow.saga.entity.SagaTransactionEntity">
+    insert into saga_transaction_log (id, shard_routing_key, saga_transaction_name, biz_serial_no,
+      saga_transaction_class_name, saga_transaction_class_method_name, transaction_status,
+      retry_time, saga_transaction_type, recover, saga_type, error_msg, version,
+      create_time, update_time, param_json,
+      param_type_json)
+    values (#{id,jdbcType=BIGINT}, #{shardRoutingKey,jdbcType=BIGINT}, #{sagaTransactionName,jdbcType=VARCHAR}, #{bizSerialNo,jdbcType=VARCHAR},
+      #{sagaTransactionClassName,jdbcType=VARCHAR}, #{sagaTransactionClassMethodName,jdbcType=VARCHAR}, #{transactionStatus,jdbcType=INTEGER},
+      #{retryTime,jdbcType=INTEGER}, #{sagaTransactionType,jdbcType=INTEGER}, #{recover,jdbcType=INTEGER}, #{sagaType,jdbcType=INTEGER},
+      #{errorMsg,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT},
+      #{paramJson,jdbcType=LONGVARCHAR}, #{paramTypeJson,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.flow.saga.entity.SagaTransactionEntity">
+    insert into saga_transaction_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="shardRoutingKey != null">
+        shard_routing_key,
+      </if>
+      <if test="sagaTransactionName != null">
+        saga_transaction_name,
+      </if>
+      <if test="bizSerialNo != null">
+        biz_serial_no,
+      </if>
+      <if test="sagaTransactionClassName != null">
+        saga_transaction_class_name,
+      </if>
+      <if test="sagaTransactionClassMethodName != null">
+        saga_transaction_class_method_name,
+      </if>
+      <if test="transactionStatus != null">
+        transaction_status,
+      </if>
+      <if test="retryTime != null">
+        retry_time,
+      </if>
+      <if test="sagaTransactionType != null">
+        saga_transaction_type,
+      </if>
+      <if test="recover != null">
+        recover,
+      </if>
+      <if test="sagaType != null">
+        saga_type,
+      </if>
+      <if test="errorMsg != null">
+        error_msg,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="paramJson != null">
+        param_json,
+      </if>
+      <if test="paramTypeJson != null">
+        param_type_json,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="shardRoutingKey != null">
+        #{shardRoutingKey,jdbcType=BIGINT},
+      </if>
+      <if test="sagaTransactionName != null">
+        #{sagaTransactionName,jdbcType=VARCHAR},
+      </if>
+      <if test="bizSerialNo != null">
+        #{bizSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sagaTransactionClassName != null">
+        #{sagaTransactionClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="sagaTransactionClassMethodName != null">
+        #{sagaTransactionClassMethodName,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionStatus != null">
+        #{transactionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="retryTime != null">
+        #{retryTime,jdbcType=INTEGER},
+      </if>
+      <if test="sagaTransactionType != null">
+        #{sagaTransactionType,jdbcType=INTEGER},
+      </if>
+      <if test="recover != null">
+        #{recover,jdbcType=INTEGER},
+      </if>
+      <if test="sagaType != null">
+        #{sagaType,jdbcType=INTEGER},
+      </if>
+      <if test="errorMsg != null">
+        #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="paramJson != null">
+        #{paramJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="paramTypeJson != null">
+        #{paramTypeJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.flow.saga.entity.SagaTransactionEntity">
+    update saga_transaction_log
+    <set>
+      <if test="sagaTransactionName != null">
+        saga_transaction_name = #{sagaTransactionName,jdbcType=VARCHAR},
+      </if>
+      <if test="bizSerialNo != null">
+        biz_serial_no = #{bizSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sagaTransactionClassName != null">
+        saga_transaction_class_name = #{sagaTransactionClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="sagaTransactionClassMethodName != null">
+        saga_transaction_class_method_name = #{sagaTransactionClassMethodName,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionStatus != null">
+        transaction_status = #{transactionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="retryTime != null">
+        retry_time = #{retryTime,jdbcType=INTEGER},
+      </if>
+      <if test="sagaTransactionType != null">
+        saga_transaction_type = #{sagaTransactionType,jdbcType=INTEGER},
+      </if>
+      <if test="recover != null">
+        recover = #{recover,jdbcType=INTEGER},
+      </if>
+      <if test="sagaType != null">
+        saga_type = #{sagaType,jdbcType=INTEGER},
+      </if>
+      <if test="errorMsg != null">
+        error_msg = #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="paramJson != null">
+        param_json = #{paramJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="paramTypeJson != null">
+        param_type_json = #{paramTypeJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+    and shard_routing_key = #{shardRoutingKey,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.flow.saga.entity.SagaTransactionEntity">
+    update saga_transaction_log
+    set saga_transaction_name = #{sagaTransactionName,jdbcType=VARCHAR},
+      biz_serial_no = #{bizSerialNo,jdbcType=VARCHAR},
+      saga_transaction_class_name = #{sagaTransactionClassName,jdbcType=VARCHAR},
+      saga_transaction_class_method_name = #{sagaTransactionClassMethodName,jdbcType=VARCHAR},
+      transaction_status = #{transactionStatus,jdbcType=INTEGER},
+      retry_time = #{retryTime,jdbcType=INTEGER},
+      saga_transaction_type = #{sagaTransactionType,jdbcType=INTEGER},
+      recover = #{recover,jdbcType=INTEGER},
+      saga_type = #{sagaType,jdbcType=INTEGER},
+      error_msg = #{errorMsg,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=BIGINT},
+      param_json = #{paramJson,jdbcType=LONGVARCHAR},
+      param_type_json = #{paramTypeJson,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+    and shard_routing_key = #{shardRoutingKey,jdbcType=BIGINT}
+  </update>
+  <select id="listSagaTransactionByCreateTimeInBatch" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from saga_transaction_log
+    where create_time > #{startTime,jdbcType=BIGINT}
+    and  <![CDATA[ create_time <= #{endTime,jdbcType=BIGINT} ]]>
+    order by create_time ASC
+    limit #{limit}
+  </select>
+
+  <select id="listSagaTransactionByCreateTime" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from saga_transaction_log
+    where create_time = #{create_time,jdbcType=BIGINT};
+  </select>
+</mapper>

@@ -8,6 +8,6 @@ import java.lang.annotation.*;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface SagaTransactionFail {
+public @interface SagaMainTransactionFail {
     String sagaTransactionName() default "";
 }

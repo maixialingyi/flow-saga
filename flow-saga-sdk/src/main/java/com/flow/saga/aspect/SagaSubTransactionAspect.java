@@ -13,13 +13,13 @@ import javax.annotation.Resource;
 @Slf4j
 @Aspect
 @Service
-public class RuntimeSagaSubTransactionAspect {
+public class SagaSubTransactionAspect {
     @Resource
     private RuntimeSagaTransactionManager runtimeSagaTransactionManager;
     @Resource
-    private RuntimeSubTransactionInterceptor runtimeSubTransactionInterceptor;
-    //@Resource
-    //private RuntimeSubTransactionRecoverInterceptor runtimeSubTransactionRecoverInterceptor;
+    private SagaSubTransactionInterceptor sagaSubTransactionInterceptor;
+    @Resource
+    private SagaSubTransactionRecoverInterceptor sagaSubTransactionRecoverInterceptor;
 
     @Around(value = "@annotation(com.flow.saga.annotation.SagaSubTransactionProcess)")
     public Object sagaSubTransactionProcess(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -27,15 +27,14 @@ public class RuntimeSagaSubTransactionAspect {
         if (!runtimeSagaTransactionManager.isInSagaTransaction()) {
             return joinPoint.proceed();
         }
-        SagaSubTransactionProcess runtimeSagaSubTransactionProcess = AnnotationUtil.findAnnotation(joinPoint,
-                SagaSubTransactionProcess.class);
+        SagaSubTransactionProcess sagaSubTransactionProcess = AnnotationUtil.findAnnotation(joinPoint,SagaSubTransactionProcess.class);
+
         Boolean recover = runtimeSagaTransactionManager.isRecover();
 
         if (recover) {
-            //return runtimeSubTransactionRecoverInterceptor.intercept(joinPoint, runtimeSagaSubTransactionProcess);
-            return null;
+            return sagaSubTransactionRecoverInterceptor.intercept(joinPoint, sagaSubTransactionProcess);
         } else {
-            return runtimeSubTransactionInterceptor.intercept(joinPoint, runtimeSagaSubTransactionProcess);
+            return sagaSubTransactionInterceptor.intercept(joinPoint, sagaSubTransactionProcess);
         }
     }
 

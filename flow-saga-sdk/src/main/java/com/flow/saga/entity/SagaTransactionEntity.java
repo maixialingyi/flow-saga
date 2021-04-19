@@ -1,8 +1,8 @@
 package com.flow.saga.entity;
 
-import com.flow.saga.annotation.SagaTransactionFail;
-import com.flow.saga.annotation.SagaTransactionRollback;
-import com.flow.saga.annotation.SagaTransactionSuccess;
+import com.flow.saga.annotation.SagaMainTransactionFail;
+import com.flow.saga.annotation.SagaMainTransactionRollback;
+import com.flow.saga.annotation.SagaMainTransactionSuccess;
 import com.flow.saga.utils.JsonUtil;
 import com.google.common.collect.Lists;
 import lombok.Getter;
@@ -281,6 +281,7 @@ public class SagaTransactionEntity {
         return classTypes;
     }
 
+    //获取成功后回调方法
     public InvocationContext getAndConstructSuccessInvocationContext() throws ClassNotFoundException {
         if (successInvocationContext != null) {
             return successInvocationContext;
@@ -288,9 +289,9 @@ public class SagaTransactionEntity {
 
         Class<?> targetClass = Thread.currentThread().getContextClassLoader().loadClass(sagaTransactionClassName);
         for (Method method : targetClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(SagaTransactionSuccess.class)) {
-                SagaTransactionSuccess sagaTransactionSuccess = method.getAnnotation(SagaTransactionSuccess.class);
-                if (sagaTransactionSuccess.sagaTransactionName().equals(sagaTransactionName)) {
+            if (method.isAnnotationPresent(SagaMainTransactionSuccess.class)) {
+                SagaMainTransactionSuccess sagaMainTransactionSuccess = method.getAnnotation(SagaMainTransactionSuccess.class);
+                if (sagaMainTransactionSuccess.sagaTransactionName().equals(sagaTransactionName)) {
                     successInvocationContext = new InvocationContext(targetClass, method,this.getAndConstructParamTypes());
                 }
             }
@@ -304,10 +305,10 @@ public class SagaTransactionEntity {
         }
         Class<?> targetClass = Thread.currentThread().getContextClassLoader().loadClass(sagaTransactionClassName);
         for (Method method : targetClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(SagaTransactionFail.class)) {
-                SagaTransactionFail runtimeSagaTransactionFail = method
-                        .getAnnotation(SagaTransactionFail.class);
-                if (runtimeSagaTransactionFail.sagaTransactionName().equals(sagaTransactionName)) {
+            if (method.isAnnotationPresent(SagaMainTransactionFail.class)) {
+                SagaMainTransactionFail runtimeSagaMainTransactionFail = method
+                        .getAnnotation(SagaMainTransactionFail.class);
+                if (runtimeSagaMainTransactionFail.sagaTransactionName().equals(sagaTransactionName)) {
                     failInvocationContext = new InvocationContext(targetClass, method,
                             this.getAndConstructParamTypes());
                 }
@@ -322,10 +323,10 @@ public class SagaTransactionEntity {
         }
         Class<?> targetClass = Thread.currentThread().getContextClassLoader().loadClass(sagaTransactionClassName);
         for (Method method : targetClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(SagaTransactionRollback.class)) {
-                SagaTransactionRollback runtimeSagaTransactionRollback = method
-                        .getAnnotation(SagaTransactionRollback.class);
-                if (runtimeSagaTransactionRollback.sagaTransactionName().equals(sagaTransactionName)) {
+            if (method.isAnnotationPresent(SagaMainTransactionRollback.class)) {
+                SagaMainTransactionRollback runtimeSagaMainTransactionRollback = method
+                        .getAnnotation(SagaMainTransactionRollback.class);
+                if (runtimeSagaMainTransactionRollback.sagaTransactionName().equals(sagaTransactionName)) {
                     rollbackInvocationContext = new InvocationContext(targetClass, method,
                             this.getAndConstructParamTypes());
                 }

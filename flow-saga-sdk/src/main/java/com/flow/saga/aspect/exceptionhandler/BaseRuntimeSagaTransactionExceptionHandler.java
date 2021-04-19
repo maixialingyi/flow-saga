@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class BaseRuntimeSagaTransactionExceptionHandler {
 
+    //回滚处理
     public void handleRollback(SagaTransactionEntity sagaTransactionEntity, Exception e) {
         List<SagaSubTransactionEntity> sagaSubTransactionEntities = sagaTransactionEntity
                 .getSagaSubTransactionEntities();
@@ -29,8 +30,7 @@ public class BaseRuntimeSagaTransactionExceptionHandler {
                 || sagaSubTransactionEntity.isRollbackFail()).forEach(sagaSubTransactionEntity -> {
 
                     try {
-                        InvocationContext rollbackInvocationContext = sagaSubTransactionEntity
-                                .getAndConstructRollbackInvocationContext();
+                        InvocationContext rollbackInvocationContext = sagaSubTransactionEntity.getAndConstructRollbackInvocationContext();
                         if (rollbackInvocationContext == null) {
                             return;
                         }
@@ -42,8 +42,7 @@ public class BaseRuntimeSagaTransactionExceptionHandler {
                         } else {
                             paramsWithException = ArrayUtils.add(params, e);
                         }
-                        ReflectionUtils.invokeMethod(rollbackInvocationContext.getMethod(), service,
-                                paramsWithException);
+                        ReflectionUtils.invokeMethod(rollbackInvocationContext.getMethod(), service,paramsWithException);
                         sagaSubTransactionEntity.rollbackSuccess();
                     } catch (Exception ee) {
                         sagaSubTransactionEntity.rollbackFail();

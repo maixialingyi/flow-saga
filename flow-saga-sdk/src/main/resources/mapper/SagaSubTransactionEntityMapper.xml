@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flow.saga.repository.mapper.SagaSubTransactionEntityMapper">
+  <resultMap id="BaseResultMap" type="com.flow.saga.entity.SagaSubTransactionEntity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="shard_routing_key" jdbcType="BIGINT" property="shardRoutingKey" />
+    <result column="saga_transaction_id" jdbcType="BIGINT" property="sagaTransactionId" />
+    <result column="sub_transaction_name" jdbcType="VARCHAR" property="subTransactionName" />
+    <result column="biz_serial_no" jdbcType="VARCHAR" property="bizSerialNo" />
+    <result column="sub_transaction_class_name" jdbcType="VARCHAR" property="subTransactionClassName" />
+    <result column="sub_transaction_class_method_name" jdbcType="VARCHAR" property="subTransactionClassMethodName" />
+    <result column="transaction_status" jdbcType="INTEGER" property="transactionStatus" />
+    <result column="error_msg" jdbcType="VARCHAR" property="errorMsg"/>
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+    <result column="param_value_json" jdbcType="LONGVARCHAR" property="paramValueJson" />
+    <result column="param_type_json" jdbcType="LONGVARCHAR" property="paramTypeJson" />
+    <result column="return_value_json" jdbcType="LONGVARCHAR" property="returnValueJson" />
+    <result column="return_type_json" jdbcType="LONGVARCHAR" property="returnTypeJson" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, shard_routing_key, saga_transaction_id, sub_transaction_name, biz_serial_no, sub_transaction_class_name,
+    sub_transaction_class_method_name, transaction_status, error_msg, version, create_time, update_time,
+    param_value_json, param_type_json, return_value_json, return_type_json
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from saga_sub_transaction_log
+    where id = #{id,jdbcType=BIGINT}
+    and shard_routing_key = #{shardRoutingKey,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectBySagaTransactionId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from saga_sub_transaction_log
+    where saga_transaction_id = #{sagaTransactionId,jdbcType=BIGINT}
+    and shard_routing_key = #{shardRoutingKey,jdbcType=BIGINT}
+  </select>
+
+  <insert id="insert" parameterType="com.flow.saga.entity.SagaSubTransactionEntity">
+    insert into saga_sub_transaction_log (id, shard_routing_key, saga_transaction_id, sub_transaction_name,
+      biz_serial_no, sub_transaction_class_name, sub_transaction_class_method_name,
+      transaction_status, error_msg, version, create_time,
+      update_time, param_value_json, param_type_json,
+      return_value_json, return_type_json
+      )
+    values (#{id,jdbcType=BIGINT}, #{shardRoutingKey,jdbcType=BIGINT}, #{sagaTransactionId,jdbcType=BIGINT}, #{subTransactionName,jdbcType=VARCHAR},
+      #{bizSerialNo,jdbcType=VARCHAR}, #{subTransactionClassName,jdbcType=VARCHAR}, #{subTransactionClassMethodName,jdbcType=VARCHAR},
+      #{transactionStatus,jdbcType=INTEGER}, #{errorMsg,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{createTime,jdbcType=BIGINT},
+      #{updateTime,jdbcType=BIGINT}, #{paramValueJson,jdbcType=LONGVARCHAR}, #{paramTypeJson,jdbcType=LONGVARCHAR},
+      #{returnValueJson,jdbcType=LONGVARCHAR}, #{returnTypeJson,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.flow.saga.entity.SagaSubTransactionEntity">
+    insert into saga_sub_transaction_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="shardRoutingKey != null">
+        shard_routing_key,
+      </if>
+      <if test="sagaTransactionId != null">
+        saga_transaction_id,
+      </if>
+      <if test="subTransactionName != null">
+        sub_transaction_name,
+      </if>
+      <if test="bizSerialNo != null">
+        biz_serial_no,
+      </if>
+      <if test="subTransactionClassName != null">
+        sub_transaction_class_name,
+      </if>
+      <if test="subTransactionClassMethodName != null">
+        sub_transaction_class_method_name,
+      </if>
+      <if test="transactionStatus != null">
+        transaction_status,
+      </if>
+      <if test="errorMsg != null">
+        error_msg,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="paramValueJson != null">
+        param_value_json,
+      </if>
+      <if test="paramTypeJson != null">
+        param_type_json,
+      </if>
+      <if test="returnValueJson != null">
+        return_value_json,
+      </if>
+      <if test="returnTypeJson != null">
+        return_type_json,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="shardRoutingKey != null">
+        #{shardRoutingKey,jdbcType=BIGINT},
+      </if>
+      <if test="sagaTransactionId != null">
+        #{sagaTransactionId,jdbcType=BIGINT},
+      </if>
+      <if test="subTransactionName != null">
+        #{subTransactionName,jdbcType=VARCHAR},
+      </if>
+      <if test="bizSerialNo != null">
+        #{bizSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subTransactionClassName != null">
+        #{subTransactionClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="subTransactionClassMethodName != null">
+        #{subTransactionClassMethodName,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionStatus != null">
+        #{transactionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="errorMsg != null">
+        #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="paramValueJson != null">
+        #{paramValueJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="paramTypeJson != null">
+        #{paramTypeJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnValueJson != null">
+        #{returnValueJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnTypeJson != null">
+        #{returnTypeJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.flow.saga.entity.SagaSubTransactionEntity">
+    update saga_sub_transaction_log
+    <set>
+      <if test="sagaTransactionId != null">
+        saga_transaction_id = #{sagaTransactionId,jdbcType=BIGINT},
+      </if>
+      <if test="subTransactionName != null">
+        sub_transaction_name = #{subTransactionName,jdbcType=VARCHAR},
+      </if>
+      <if test="bizSerialNo != null">
+        biz_serial_no = #{bizSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subTransactionClassName != null">
+        sub_transaction_class_name = #{subTransactionClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="subTransactionClassMethodName != null">
+        sub_transaction_class_method_name = #{subTransactionClassMethodName,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionStatus != null">
+        transaction_status = #{transactionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="errorMsg != null">
+        error_msg = #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="paramValueJson != null">
+        param_value_json = #{paramValueJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="paramTypeJson != null">
+        param_type_json = #{paramTypeJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnValueJson != null">
+        return_value_json = #{returnValueJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnTypeJson != null">
+        return_type_json = #{returnTypeJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+    and shard_routing_key = #{shardRoutingKey,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.flow.saga.entity.SagaSubTransactionEntity">
+    update saga_sub_transaction_log
+    set saga_transaction_id = #{sagaTransactionId,jdbcType=BIGINT},
+      sub_transaction_name = #{subTransactionName,jdbcType=VARCHAR},
+      biz_serial_no = #{bizSerialNo,jdbcType=VARCHAR},
+      sub_transaction_class_name = #{subTransactionClassName,jdbcType=VARCHAR},
+      sub_transaction_class_method_name = #{subTransactionClassMethodName,jdbcType=VARCHAR},
+      transaction_status = #{transactionStatus,jdbcType=INTEGER},
+      error_msg = #{errorMsg,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=BIGINT},
+      param_value_json = #{paramValueJson,jdbcType=LONGVARCHAR},
+      param_type_json = #{paramTypeJson,jdbcType=LONGVARCHAR},
+      return_value_json = #{returnValueJson,jdbcType=LONGVARCHAR},
+      return_type_json = #{returnTypeJson,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+    and shard_routing_key = #{shardRoutingKey,jdbcType=BIGINT}
+  </update>
+</mapper>

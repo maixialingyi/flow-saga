@@ -49,7 +49,7 @@ public class SagaTransactionContext {
      * @return
      */
     public boolean needRetryCheckAndAddRetryTime(Exception e) {
-        // 先判断子事务的配置
+        // 先判断当前子事务的配置
         if (this.getCurrentSagaSubTransaction() != null
                 && this.getCurrentSagaSubTransaction().getCompensateExceptions() != null
                 && this.getCurrentSagaSubTransaction().getCompensateExceptions().length != 0) {

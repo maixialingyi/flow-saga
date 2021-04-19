@@ -4,61 +4,23 @@ import com.flow.saga.annotation.SagaSubTransactionFail;
 import com.flow.saga.annotation.SagaSubTransactionProcess;
 import com.flow.saga.annotation.SagaSubTransactionRollback;
 import com.flow.saga.annotation.SagaSubTransactionSuccess;
-import com.flow.saga.entity.*;
+import com.flow.saga.entity.InvocationContext;
+import com.flow.saga.entity.SagaSubTransactionEntity;
+import com.flow.saga.entity.SagaTransactionEntity;
+import com.flow.saga.entity.SagaTransactionStatus;
 import com.flow.saga.utils.JsonUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
-@Service
-public class RuntimeSubTransactionInterceptor {
-    @Resource
-    private RuntimeSagaTransactionManager runtimeSagaTransactionManager;
+public class SagaSubTransactionEntityInitFactory {
 
-    public Object intercept(ProceedingJoinPoint joinPoint,
-                            SagaSubTransactionProcess runtimeSagaSubTransactionProcess) throws Throwable {
-
-        SagaTransactionContext context = SagaTransactionContextHolder.getSagaTransactionContext();
-        if (context == null) {
-            return joinPoint.proceed();
-        }
-
-        SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();
-
-        SagaSubTransactionEntity sagaSubTransactionEntity = this.initSagaSubTransactionEntity(joinPoint,
-                runtimeSagaSubTransactionProcess, sagaTransactionEntity);
-
-        runtimeSagaTransactionManager.addSubTransaction(context, sagaSubTransactionEntity);
-
-        try {
-            Object object = joinPoint.proceed();
-            runtimeSagaTransactionManager.commitSubTransaction(sagaSubTransactionEntity, object);
-            runtimeSagaTransactionManager.successSubTransactionProcess(sagaSubTransactionEntity);
-            return object;
-        } catch (Exception e) {
-            try {
-                Object object = runtimeSagaTransactionManager.handleSubTransactionException(context,
-                        sagaSubTransactionEntity, joinPoint, e);
-                runtimeSagaTransactionManager.commitSubTransaction(sagaSubTransactionEntity, object);
-                runtimeSagaTransactionManager.successSubTransactionProcess(sagaSubTransactionEntity);
-                return object;
-            } catch (Exception e1) {
-                runtimeSagaTransactionManager.failSubTransactionProcess(sagaSubTransactionEntity, e1);
-                throw e1;
-            }
-        }
-    }
-
-    SagaSubTransactionEntity initSagaSubTransactionEntity(ProceedingJoinPoint joinPoint,
+    public static SagaSubTransactionEntity initSagaSubTransactionEntity(ProceedingJoinPoint joinPoint,
                                                           SagaSubTransactionProcess sagaSubTransactionProcess,
                                                           SagaTransactionEntity sagaTransactionEntity) {
 
@@ -136,6 +98,6 @@ public class RuntimeSubTransactionInterceptor {
         sagaSubTransactionEntity.setRollbackInvocationContext(rollbackInvocationContext);
 
         return sagaSubTransactionEntity;
-
     }
+
 }

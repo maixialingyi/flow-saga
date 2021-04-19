@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class ExceptionRuntimeSagaTransactionExceptionHandler extends BaseRuntimeSagaTransactionExceptionHandler
-        implements RuntimeSagaTransactionExceptionHandler {
+public class ConfigByExceptionSagaTransactionExceptionHandler extends BaseRuntimeSagaTransactionExceptionHandler
+        implements SagaTransactionExceptionHandler {
     @Override
     public void handleException(SagaTransactionContext context, Exception e) {
         SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();

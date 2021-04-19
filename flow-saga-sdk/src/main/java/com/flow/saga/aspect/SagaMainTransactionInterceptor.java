@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class RuntimeTransactionInterceptor{
+public class SagaMainTransactionInterceptor {
 
     @Resource
     private RuntimeSagaTransactionManager runtimeSagaTransactionManager;
 
-    public Object intercept(ProceedingJoinPoint joinPoint, SagaTransactionProcess runtimeSagaTransactionProcess, boolean recover) throws Throwable {
+    public Object intercept(ProceedingJoinPoint joinPoint, SagaMainTransactionProcess runtimeSagaTransactionProcess, boolean recover) throws Throwable {
 
         // 初始化上下文
         SagaTransactionContext sagaTransactionContext = this.initSagaTransactionContext(joinPoint, runtimeSagaTransactionProcess, recover);
@@ -56,7 +56,7 @@ public class RuntimeTransactionInterceptor{
      * 初始化上下文
      */
     private SagaTransactionContext initSagaTransactionContext(ProceedingJoinPoint joinPoint,
-                         SagaTransactionProcess runtimeSagaTransactionProcess, Boolean recover) {
+                                                              SagaMainTransactionProcess runtimeSagaTransactionProcess, Boolean recover) {
 
         // 默认传播行为PROPAGATION_REQUIRED（如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中）
         SagaTransactionContext sagaTransactionContext = SagaTransactionContextHolder.getSagaTransactionContext();
@@ -109,26 +109,26 @@ public class RuntimeTransactionInterceptor{
         InvocationContext failInvocationContext = null;
         InvocationContext rollbackInvocationContext = null;
         for (Method method : methods) {
-            if (method.isAnnotationPresent(SagaTransactionSuccess.class)) {
-                SagaTransactionSuccess runtimeSagaTransactionSuccess = method
-                        .getAnnotation(SagaTransactionSuccess.class);
-                if (runtimeSagaTransactionSuccess.sagaTransactionName().equals(sagaTransactionName)) {
+            if (method.isAnnotationPresent(SagaMainTransactionSuccess.class)) {
+                SagaMainTransactionSuccess runtimeSagaMainTransactionSuccess = method
+                        .getAnnotation(SagaMainTransactionSuccess.class);
+                if (runtimeSagaMainTransactionSuccess.sagaTransactionName().equals(sagaTransactionName)) {
                     successInvocationContext = new InvocationContext(targetClass, method, method.getParameterTypes());
                 }
             }
 
-            if (method.isAnnotationPresent(SagaTransactionFail.class)) {
-                SagaTransactionFail runtimeSagaTransactionFail = method
-                        .getAnnotation(SagaTransactionFail.class);
-                if (runtimeSagaTransactionFail.sagaTransactionName().equals(sagaTransactionName)) {
+            if (method.isAnnotationPresent(SagaMainTransactionFail.class)) {
+                SagaMainTransactionFail runtimeSagaMainTransactionFail = method
+                        .getAnnotation(SagaMainTransactionFail.class);
+                if (runtimeSagaMainTransactionFail.sagaTransactionName().equals(sagaTransactionName)) {
                     failInvocationContext = new InvocationContext(targetClass, method, method.getParameterTypes());
                 }
             }
 
-            if (method.isAnnotationPresent(SagaTransactionRollback.class)) {
-                SagaTransactionRollback runtimeSagaTransactionRollback = method
-                        .getAnnotation(SagaTransactionRollback.class);
-                if (runtimeSagaTransactionRollback.sagaTransactionName().equals(sagaTransactionName)) {
+            if (method.isAnnotationPresent(SagaMainTransactionRollback.class)) {
+                SagaMainTransactionRollback runtimeSagaMainTransactionRollback = method
+                        .getAnnotation(SagaMainTransactionRollback.class);
+                if (runtimeSagaMainTransactionRollback.sagaTransactionName().equals(sagaTransactionName)) {
                     rollbackInvocationContext = new InvocationContext(targetClass, method, method.getParameterTypes());
                 }
             }

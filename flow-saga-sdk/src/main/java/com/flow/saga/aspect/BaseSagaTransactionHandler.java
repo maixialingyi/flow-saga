@@ -1,6 +1,6 @@
 package com.flow.saga.aspect;
 
-import com.flow.saga.aspect.exceptionhandler.RuntimeSagaTransactionExceptionHandlerDispatcher;
+import com.flow.saga.aspect.exceptionhandler.SagaTransactionExceptionHandlerDispatcher;
 import com.flow.saga.configuration.SagaProperties;
 import com.flow.saga.entity.*;
 import com.flow.saga.repository.SagaLogRepository;
@@ -33,7 +33,7 @@ public class BaseSagaTransactionHandler {
     private SagaLogRepository sagaLogRepository;
 
     @Resource
-    private RuntimeSagaTransactionExceptionHandlerDispatcher runtimeSagaTransactionExceptionHandlerDispatcher;
+    private SagaTransactionExceptionHandlerDispatcher sagaTransactionExceptionHandlerDispatcher;
 
     public void commit(SagaTransactionContext sagaTransactionContext) {
         // 如果不是最外层事务，就直接返回，不提交事务。
@@ -41,12 +41,11 @@ public class BaseSagaTransactionHandler {
             return;
         }
 
-        // 提交事务
         SagaTransactionEntity sagaTransactionEntity = sagaTransactionContext.getSagaTransactionEntity();
         sagaTransactionEntity.success();
-        // 执行事务成功后方法
+        // 执行主事务成功后方法
         this.successTransactionProcess(sagaTransactionEntity);
-        // 修改数据库状态为执行成功
+        // 修改主，子事务状态为执行成功
         this.updateSagaTransaction(sagaTransactionEntity);
         log.debug("[RuntimeSagaTransactionProcess]流程{}结束, 流程类型{}, 业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
@@ -68,7 +67,7 @@ public class BaseSagaTransactionHandler {
         }
         SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();
         try {
-            runtimeSagaTransactionExceptionHandlerDispatcher.handleException(context, e);
+            sagaTransactionExceptionHandlerDispatcher.handleException(context, e);
         } catch (Exception e1) {
             // 框架处理失败产生异常
             log.error("[RuntimeSagaTransactionProcess]流程{}异常, 框架处理失败, 流程类型{}, 业务流水号:{}",
@@ -94,7 +93,7 @@ public class BaseSagaTransactionHandler {
         executorService.submit(() -> {
             SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();
             try {
-                runtimeSagaTransactionExceptionHandlerDispatcher.handleException(context, e);
+                sagaTransactionExceptionHandlerDispatcher.handleException(context, e);
             } catch (Exception e1) {
                 // 框架处理失败产生异常
                 log.error("[RuntimeSagaTransactionProcess]流程{}异常, 框架处理失败, 流程类型{}, 业务流水号:{}",
@@ -186,6 +185,7 @@ public class BaseSagaTransactionHandler {
         return sagaTransactionContext != null && sagaTransactionContext.getLayerCount() == 1;
     }
 
+    //
     void successTransactionProcess(SagaTransactionEntity sagaTransactionEntity) {
         try {
             InvocationContext successInvocation = sagaTransactionEntity.getAndConstructSuccessInvocationContext();

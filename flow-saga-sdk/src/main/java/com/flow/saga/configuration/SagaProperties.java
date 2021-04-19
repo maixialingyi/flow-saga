@@ -4,10 +4,6 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-/**
- * @author: songzeqi
- * @Date: 2019-07-18 4:52 PM
- */
 @Data
 @Component
 @ConfigurationProperties(prefix = "saga")

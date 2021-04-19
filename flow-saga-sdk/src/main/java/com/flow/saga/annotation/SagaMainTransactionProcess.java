@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface SagaTransactionProcess {
+public @interface SagaMainTransactionProcess {
 
     //事务名称
     String sagaTransactionName() default "";
