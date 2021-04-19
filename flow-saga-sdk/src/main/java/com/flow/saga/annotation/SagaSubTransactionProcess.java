@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 public @interface SagaSubTransactionProcess {
     String sagaSubTransactionName() default "";
 
-    Class<? extends Exception>[] compensateExceptions() default {};
+    Class<? extends Exception>[] reExecuteExceptions() default {};
 
     Class<? extends Exception>[] rollbackExceptions() default {};
 }

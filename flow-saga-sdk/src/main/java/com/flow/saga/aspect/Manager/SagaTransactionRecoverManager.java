@@ -1,6 +1,7 @@
-package com.flow.saga.aspect;
+package com.flow.saga.aspect.Manager;
 
 import com.flow.saga.annotation.SagaSubTransactionProcess;
+import com.flow.saga.aspect.Manager.BaseSagaTransactionManager;
 import com.flow.saga.entity.SagaSubTransactionEntity;
 import com.flow.saga.entity.SagaTransactionContext;
 import com.flow.saga.entity.SagaTransactionContextHolder;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class RuntimeSagaTransactionRecoverManager extends BaseSagaTransactionHandler {
+public class SagaTransactionRecoverManager extends BaseSagaTransactionManager {
 
     public void begin(SagaTransactionContext context) {
         SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();

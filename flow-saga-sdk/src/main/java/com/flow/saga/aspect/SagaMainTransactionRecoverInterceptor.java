@@ -1,6 +1,7 @@
 package com.flow.saga.aspect;
 
 import com.flow.saga.annotation.SagaMainTransactionProcess;
+import com.flow.saga.aspect.Manager.SagaTransactionRecoverManager;
 import com.flow.saga.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,7 +15,7 @@ import javax.annotation.Resource;
 public class SagaMainTransactionRecoverInterceptor {
 
     @Resource
-    private RuntimeSagaTransactionRecoverManager runtimeSagaTransactionRecoverManager;
+    private SagaTransactionRecoverManager sagaTransactionRecoverManager;
 
     public Object intercept(ProceedingJoinPoint joinPoint, SagaMainTransactionProcess sagaMainTransactionProcess,
                             boolean recover) throws Throwable {
@@ -25,22 +26,22 @@ public class SagaMainTransactionRecoverInterceptor {
 
         try {
             // 恢复事务上下文，开始恢复事务
-            runtimeSagaTransactionRecoverManager.begin(sagaTransactionContext);
+            sagaTransactionRecoverManager.begin(sagaTransactionContext);
             Object returnValue = joinPoint.proceed();
             // 恢复提交事务
-            runtimeSagaTransactionRecoverManager.commit(sagaTransactionContext);
+            sagaTransactionRecoverManager.commit(sagaTransactionContext);
             return returnValue;
         } catch (Throwable e) {
             if (e instanceof Exception) {
                 // 处理事务回滚
-                runtimeSagaTransactionRecoverManager.handleException(sagaTransactionContext, (Exception) e);
+                sagaTransactionRecoverManager.handleException(sagaTransactionContext, (Exception) e);
             } else {
-                runtimeSagaTransactionRecoverManager.handleException(sagaTransactionContext, new Exception(e));
+                sagaTransactionRecoverManager.handleException(sagaTransactionContext, new Exception(e));
             }
             throw e;
         } finally {
             // 释放事务
-            runtimeSagaTransactionRecoverManager.release(sagaTransactionContext);
+            sagaTransactionRecoverManager.release(sagaTransactionContext);
         }
 
     }
@@ -56,9 +57,7 @@ public class SagaMainTransactionRecoverInterceptor {
 
         SagaTransactionConfig sagaTransactionConfig = new SagaTransactionConfig();
         sagaTransactionConfig.setSagaTransactionType(sagaMainTransactionProcess.sagaTransactionType());
-        sagaTransactionConfig.setStartCompensateAfterTransactionName(
-                sagaMainTransactionProcess.startCompensateAfterTransactionName());
-        sagaTransactionConfig.setReExecuteExceptionList(sagaMainTransactionProcess.compensateExceptions());
+        sagaTransactionConfig.setReExecuteExceptionList(sagaMainTransactionProcess.reExecuteExceptions());
         sagaTransactionConfig.setRollbackExceptionList(sagaMainTransactionProcess.rollbackExceptions());
         sagaTransactionConfig.setRetryTime(sagaMainTransactionProcess.retryTime());
         sagaTransactionConfig.setRetryInterval(sagaMainTransactionProcess.retryInterval());

@@ -22,10 +22,10 @@ public class BaseRuntimeSagaTransactionExceptionHandler {
     public void handleRollback(SagaTransactionEntity sagaTransactionEntity, Exception e) {
         List<SagaSubTransactionEntity> sagaSubTransactionEntities = sagaTransactionEntity
                 .getSagaSubTransactionEntities();
-        // 逆序回滚已处理的子事务
+        // 反转事务顺序
         Collections.reverse(sagaSubTransactionEntities);
 
-        // 回滚失败或执行成功则回滚
+        // 回滚失败或执行成功 -> 回滚
         sagaSubTransactionEntities.stream().filter(sagaSubTransactionEntity -> sagaSubTransactionEntity.isSuccess()
                 || sagaSubTransactionEntity.isRollbackFail()).forEach(sagaSubTransactionEntity -> {
 
@@ -61,8 +61,7 @@ public class BaseRuntimeSagaTransactionExceptionHandler {
                 .collect(Collectors.toList()).isEmpty()) {
             // 执行顶层事务的回滚方法
             try {
-                InvocationContext rollbackInvocationContext = sagaTransactionEntity
-                        .getAndConstructRollbackInvocationContext();
+                InvocationContext rollbackInvocationContext = sagaTransactionEntity.getAndConstructRollbackInvocationContext();
                 if (rollbackInvocationContext != null) {
                     Object service = BeanUtil.getBean(rollbackInvocationContext.getTargetClass());
                     Object[] params = sagaTransactionEntity.getAndConstructParamValues();
@@ -74,7 +73,6 @@ public class BaseRuntimeSagaTransactionExceptionHandler {
                     }
                     ReflectionUtils.invokeMethod(rollbackInvocationContext.getMethod(), service, paramsWithException);
                     sagaTransactionEntity.rollbackSuccess();
-
                 }
                 sagaTransactionEntity.rollbackSuccess();
             } catch (Exception e1) {

@@ -34,7 +34,7 @@ public class SagaCompensateMessageListenerDemo {
             // 数据库无数据、已经处理到终态、或者非本服务的sagaTransactionName -> 不处理
             if (sagaTransactionEntity == null || sagaTransactionEntity.isFinish() || !SagaTransactionNameConstant.sagaTransactionNameList
                     .contains(sagaTransactionEntity.getSagaTransactionName())) {
-                return new Object();
+                return "SUCCESS";
             }
 
             sagaTransactionRecoverService.recover(sagaTransactionEntity);

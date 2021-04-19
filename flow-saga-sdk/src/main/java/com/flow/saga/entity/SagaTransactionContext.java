@@ -44,9 +44,6 @@ public class SagaTransactionContext {
 
     /**
      * 判断是否需要重试，如果需要，则增加重试次数
-     *
-     * @param e
-     * @return
      */
     public boolean needRetryCheckAndAddRetryTime(Exception e) {
         // 先判断当前子事务的配置
@@ -56,22 +53,17 @@ public class SagaTransactionContext {
 
             return this.sagaTransactionEntity.needRetryCheckAndAddRetryTime(
                     this.getCurrentSagaSubTransaction().getCompensateExceptions(),
-                    this.sagaTransactionConfig.getStartCompensateAfterTransactionName(), e,
+                    e,
                     this.sagaTransactionConfig.getRetryTime());
         }
 
         return this.sagaTransactionEntity.needRetryCheckAndAddRetryTime(
                 this.sagaTransactionConfig.getReExecuteExceptionList(),
-                this.sagaTransactionConfig.getStartCompensateAfterTransactionName(), e,
+                e,
                 this.sagaTransactionConfig.getRetryTime());
     }
 
-    /**
-     * 判断是否需要重试
-     *
-     * @param e
-     * @return
-     */
+    /** 判断是否需要重试 */
     public boolean isCompensateExceptionType(Exception e) {
         // 先判断子事务的配置
         if (this.getCurrentSagaSubTransaction() != null
@@ -79,32 +71,23 @@ public class SagaTransactionContext {
                 && this.getCurrentSagaSubTransaction().getCompensateExceptions().length != 0) {
 
             return this.sagaTransactionEntity.isCompensateExceptionType(
-                    this.getCurrentSagaSubTransaction().getCompensateExceptions(),
-                    this.sagaTransactionConfig.getStartCompensateAfterTransactionName(), e);
+                    this.getCurrentSagaSubTransaction().getCompensateExceptions(),e);
         }
 
         return this.sagaTransactionEntity.isCompensateExceptionType(
-                this.sagaTransactionConfig.getReExecuteExceptionList(),
-                this.sagaTransactionConfig.getStartCompensateAfterTransactionName(), e);
+                this.sagaTransactionConfig.getReExecuteExceptionList(),e);
     }
 
 
-    /**
-     * 判断是否要回滚
-     *
-     * @param e
-     * @return
-     */
+    /** 判断是否要回滚 */
     public boolean needRollback(Exception e) {
         // 先判断子事务的配置
         if (this.getCurrentSagaSubTransaction() != null
                 && this.getCurrentSagaSubTransaction().getRollbackExceptions() != null
                 && this.getCurrentSagaSubTransaction().getRollbackExceptions().length != 0) {
 
-            return this.sagaTransactionEntity.needRollback(this.getCurrentSagaSubTransaction().getRollbackExceptions(),
-                    e, this.sagaTransactionConfig.getStartCompensateAfterTransactionName());
+            return this.sagaTransactionEntity.needRollback(this.getCurrentSagaSubTransaction().getRollbackExceptions(), e);
         }
-        return this.sagaTransactionEntity.needRollback(this.sagaTransactionConfig.getRollbackExceptionList(), e,
-                this.sagaTransactionConfig.getStartCompensateAfterTransactionName());
+        return this.sagaTransactionEntity.needRollback(this.sagaTransactionConfig.getRollbackExceptionList(), e);
     }
 }

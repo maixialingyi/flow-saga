@@ -1,6 +1,7 @@
 package com.flow.saga.aspect;
 
 import com.flow.saga.annotation.SagaMainTransactionProcess;
+import com.flow.saga.aspect.Manager.SagaTransactionManager;
 import com.flow.saga.utils.AnnotationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -16,7 +17,7 @@ import javax.annotation.Resource;
 public class SagaMainTransactionAspect {
 
     @Resource
-    private RuntimeSagaTransactionManager runtimeSagaTransactionManager;
+    private SagaTransactionManager sagaTransactionManager;
 
     @Resource
     private SagaMainTransactionInterceptor sagaMainTransactionInterceptor;
@@ -26,14 +27,16 @@ public class SagaMainTransactionAspect {
 
     @Around(value = "@annotation(com.flow.saga.annotation.SagaMainTransactionProcess)")
     public Object sagaFlowProcess(ProceedingJoinPoint joinPoint) throws Throwable {
-        Boolean recover = runtimeSagaTransactionManager.isRecover();
 
-        SagaMainTransactionProcess sagaMainTransactionProcess = AnnotationUtil.findAnnotation(joinPoint, SagaMainTransactionProcess.class);
+        SagaMainTransactionProcess sagaMainTransactionProcess = AnnotationUtil.findAnnotation(joinPoint,SagaMainTransactionProcess.class);
+
+        //是否为恢复模式
+        Boolean recover = sagaTransactionManager.isRecover();
 
         //离线恢复
         if (recover) {
             return sagaMainTransactionRecoverInterceptor.intercept(joinPoint, sagaMainTransactionProcess, recover);
-        } else { //正常执行
+        } else {
             return sagaMainTransactionInterceptor.intercept(joinPoint, sagaMainTransactionProcess, recover);
         }
 

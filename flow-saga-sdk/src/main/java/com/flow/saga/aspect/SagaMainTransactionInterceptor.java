@@ -1,6 +1,7 @@
 package com.flow.saga.aspect;
 
 import com.flow.saga.annotation.*;
+import com.flow.saga.aspect.Manager.SagaTransactionManager;
 import com.flow.saga.entity.*;
 import com.flow.saga.utils.JsonUtil;
 import com.google.common.collect.Lists;
@@ -23,40 +24,41 @@ import java.util.stream.Collectors;
 public class SagaMainTransactionInterceptor {
 
     @Resource
-    private RuntimeSagaTransactionManager runtimeSagaTransactionManager;
+    private SagaTransactionManager sagaTransactionManager;
 
-    public Object intercept(ProceedingJoinPoint joinPoint, SagaMainTransactionProcess runtimeSagaTransactionProcess, boolean recover) throws Throwable {
+    public Object intercept(ProceedingJoinPoint joinPoint,
+                            SagaMainTransactionProcess runtimeSagaTransactionProcess,
+                            boolean recover) throws Throwable {
 
         // 初始化上下文
-        SagaTransactionContext sagaTransactionContext = this.initSagaTransactionContext(joinPoint, runtimeSagaTransactionProcess, recover);
+        SagaTransactionContext sagaTransactionContext = this.initSagaMianTransactionContext(joinPoint, runtimeSagaTransactionProcess, recover);
 
         try {
             //保存saga log
-            runtimeSagaTransactionManager.begin(sagaTransactionContext);
+            sagaTransactionManager.begin(sagaTransactionContext);
             // 执行业务流程
             Object returnValue = joinPoint.proceed();
             // 提交事务
-            runtimeSagaTransactionManager.commit(sagaTransactionContext);
+            sagaTransactionManager.commit(sagaTransactionContext);
             return returnValue;
         } catch (Throwable e) {
-            // 处理事务回滚
+            // 执行失败 或 失败子事务重试失败
             if (e instanceof Exception) {
-                runtimeSagaTransactionManager.handleException(sagaTransactionContext, (Exception) e);
+                sagaTransactionManager.handleException(sagaTransactionContext, (Exception) e);
             } else {
-                runtimeSagaTransactionManager.handleException(sagaTransactionContext,  new Exception(e));
+                sagaTransactionManager.handleException(sagaTransactionContext,  new Exception(e));
             }
             throw e;
         } finally {
             // 释放事务
-            runtimeSagaTransactionManager.release(sagaTransactionContext);
+            sagaTransactionManager.release(sagaTransactionContext);
         }
     }
 
-    /**
-     * 初始化上下文
-     */
-    private SagaTransactionContext initSagaTransactionContext(ProceedingJoinPoint joinPoint,
-                                                              SagaMainTransactionProcess runtimeSagaTransactionProcess, Boolean recover) {
+    /**  初始化上下文  */
+    private SagaTransactionContext initSagaMianTransactionContext(ProceedingJoinPoint joinPoint,
+                                                              SagaMainTransactionProcess runtimeSagaTransactionProcess,
+                                                              Boolean recover) {
 
         // 默认传播行为PROPAGATION_REQUIRED（如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中）
         SagaTransactionContext sagaTransactionContext = SagaTransactionContextHolder.getSagaTransactionContext();
@@ -154,9 +156,7 @@ public class SagaMainTransactionInterceptor {
 
         SagaTransactionConfig sagaTransactionConfig = new SagaTransactionConfig();
         sagaTransactionConfig.setSagaTransactionType(runtimeSagaTransactionProcess.sagaTransactionType());
-        sagaTransactionConfig.setStartCompensateAfterTransactionName(
-                runtimeSagaTransactionProcess.startCompensateAfterTransactionName());
-        sagaTransactionConfig.setReExecuteExceptionList(runtimeSagaTransactionProcess.compensateExceptions());
+        sagaTransactionConfig.setReExecuteExceptionList(runtimeSagaTransactionProcess.reExecuteExceptions());
         sagaTransactionConfig.setRollbackExceptionList(runtimeSagaTransactionProcess.rollbackExceptions());
         sagaTransactionConfig.setRetryTime(runtimeSagaTransactionProcess.retryTime());
         sagaTransactionConfig.setRetryInterval(runtimeSagaTransactionProcess.retryInterval());

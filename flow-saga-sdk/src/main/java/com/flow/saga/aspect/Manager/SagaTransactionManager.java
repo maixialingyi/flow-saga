@@ -1,4 +1,4 @@
-package com.flow.saga.aspect;
+package com.flow.saga.aspect.Manager;
 
 import com.flow.saga.entity.SagaTransactionContext;
 import com.flow.saga.entity.SagaTransactionContextHolder;
@@ -8,15 +8,14 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class RuntimeSagaTransactionManager extends BaseSagaTransactionHandler {
+public class SagaTransactionManager extends BaseSagaTransactionManager {
 
     public void begin(SagaTransactionContext context) {
-
+        //设置上下文
         SagaTransactionContextHolder.putSagaTransactionContext(context);
 
         SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();
 
-        //todo 是否需要
         context.addLayerCount();
         if (context.getLayerCount() > 1) {
             log.debug("[RuntimeSagaTransactionProcess]流程{}已经存在顶层saga事务，加入当前事务, 流程类型{}, 业务流水号:{}",

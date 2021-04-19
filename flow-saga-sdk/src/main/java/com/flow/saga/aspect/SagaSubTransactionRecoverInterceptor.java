@@ -1,6 +1,7 @@
 package com.flow.saga.aspect;
 
 import com.flow.saga.annotation.SagaSubTransactionProcess;
+import com.flow.saga.aspect.Manager.SagaTransactionRecoverManager;
 import com.flow.saga.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -12,14 +13,14 @@ import javax.annotation.Resource;
 @Service
 public class SagaSubTransactionRecoverInterceptor {
     @Resource
-    private RuntimeSagaTransactionRecoverManager runtimeSagaTransactionRecoverManager;
+    private SagaTransactionRecoverManager sagaTransactionRecoverManager;
 
     public Object intercept(ProceedingJoinPoint joinPoint,
                             SagaSubTransactionProcess sagaSubTransactionProcess) throws Throwable {
         SagaTransactionContext sagaTransactionContext = SagaTransactionContextHolder.getSagaTransactionContext();
         SagaTransactionEntity sagaTransactionEntity = sagaTransactionContext.getSagaTransactionEntity();
 
-        SagaSubTransactionEntity sagaSubTransactionEntity = runtimeSagaTransactionRecoverManager
+        SagaSubTransactionEntity sagaSubTransactionEntity = sagaTransactionRecoverManager
                 .getCurrentSubTransaction(sagaSubTransactionProcess);
 
         if (sagaSubTransactionEntity != null
@@ -39,29 +40,29 @@ public class SagaSubTransactionRecoverInterceptor {
             sagaSubTransactionEntity.initStatus();
             // 填充运行时动态信息
             sagaSubTransactionEntity.setRollbackExceptions(sagaSubTransactionProcess.rollbackExceptions());
-            sagaSubTransactionEntity.setCompensateExceptions(sagaSubTransactionProcess.compensateExceptions());
+            sagaSubTransactionEntity.setCompensateExceptions(sagaSubTransactionProcess.reExecuteExceptions());
             sagaTransactionContext.setCurrentSagaSubTransaction(sagaSubTransactionEntity);
-            runtimeSagaTransactionRecoverManager.updateSubTransaction(sagaSubTransactionEntity);
+            sagaTransactionRecoverManager.updateSubTransaction(sagaSubTransactionEntity);
         } else {
             sagaSubTransactionEntity = SagaSubTransactionEntityInitFactory.initSagaSubTransactionEntity(joinPoint, sagaSubTransactionProcess,
                     sagaTransactionEntity);
-            runtimeSagaTransactionRecoverManager.addSubTransaction(sagaTransactionContext, sagaSubTransactionEntity);
+            sagaTransactionRecoverManager.addSubTransaction(sagaTransactionContext, sagaSubTransactionEntity);
         }
 
         try {
             Object object = joinPoint.proceed();
-            runtimeSagaTransactionRecoverManager.commitSubTransaction(sagaSubTransactionEntity, object);
-            runtimeSagaTransactionRecoverManager.successSubTransactionProcess(sagaSubTransactionEntity);
+            sagaTransactionRecoverManager.commitSubTransaction(sagaSubTransactionEntity, object);
+            sagaTransactionRecoverManager.successSubTransactionProcess(sagaSubTransactionEntity);
             return object;
         } catch (Exception e) {
             try {
-                Object object = runtimeSagaTransactionRecoverManager
+                Object object = sagaTransactionRecoverManager
                         .handleSubTransactionException(sagaTransactionContext, sagaSubTransactionEntity, joinPoint, e);
-                runtimeSagaTransactionRecoverManager.commitSubTransaction(sagaSubTransactionEntity, object);
-                runtimeSagaTransactionRecoverManager.successSubTransactionProcess(sagaSubTransactionEntity);
+                sagaTransactionRecoverManager.commitSubTransaction(sagaSubTransactionEntity, object);
+                sagaTransactionRecoverManager.successSubTransactionProcess(sagaSubTransactionEntity);
                 return object;
             } catch (Exception e1) {
-                runtimeSagaTransactionRecoverManager.failSubTransactionProcess(sagaSubTransactionEntity, e1);
+                sagaTransactionRecoverManager.failSubTransactionProcess(sagaSubTransactionEntity, e1);
                 throw e1;
             }
 

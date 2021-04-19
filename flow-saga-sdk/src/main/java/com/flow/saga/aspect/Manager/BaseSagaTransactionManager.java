@@ -1,4 +1,4 @@
-package com.flow.saga.aspect;
+package com.flow.saga.aspect.Manager;
 
 import com.flow.saga.aspect.exceptionhandler.SagaTransactionExceptionHandlerDispatcher;
 import com.flow.saga.configuration.SagaProperties;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
-public class BaseSagaTransactionHandler {
+public class BaseSagaTransactionManager {
 
     @Resource
     private SagaProperties sagaProperties;
@@ -167,6 +167,13 @@ public class BaseSagaTransactionHandler {
                 sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo());
     }
 
+    /**
+     * 是否为恢复模式
+     * 主事务被其他事务嵌套   恢复模式   上下文 != null  recover = true
+     *                    非恢复模式 上下文 != null  recover = false
+     * 主事务未被其他事务嵌套  恢复模式  上下文 != null  recover = true
+     *                    非恢复模式 上下文 == null  recover = false
+     */
     public boolean isRecover() {
         return SagaTransactionContextHolder.getSagaTransactionContext() != null
                 && SagaTransactionContextHolder.getSagaTransactionContext().isRecover();
@@ -178,8 +185,6 @@ public class BaseSagaTransactionHandler {
 
     /**
      * 判断当前事务是否是最后的
-     *
-     * @return
      */
     boolean isLastTransaction(SagaTransactionContext sagaTransactionContext) {
         return sagaTransactionContext != null && sagaTransactionContext.getLayerCount() == 1;

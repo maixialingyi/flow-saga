@@ -22,6 +22,4 @@ public class SagaTransactionConfig {
 
     private Class<? extends Exception>[] rollbackExceptionList;
 
-    private String startCompensateAfterTransactionName = "";
-
 }

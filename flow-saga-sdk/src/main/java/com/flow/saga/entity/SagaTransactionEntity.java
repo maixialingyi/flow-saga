@@ -99,12 +99,6 @@ public class SagaTransactionEntity {
             }
         }
         return false;
-
-    }
-
-    private static boolean containsSubTransaction(List<String> doneSubTransactionNames,
-                                                  String startCompensateAfterTransactionName) {
-        return doneSubTransactionNames.contains(startCompensateAfterTransactionName);
     }
 
     public boolean isFinish() {
@@ -187,14 +181,8 @@ public class SagaTransactionEntity {
 
     /**
      * 是否需要回滚
-     *
-     * @param exceptionTypes
-     * @param e
-     * @param startCompensateAfterTransactionName
-     * @return
      */
-    public boolean needRollback(Class<? extends Exception>[] exceptionTypes, Exception e,
-                                String startCompensateAfterTransactionName) {
+    public boolean needRollback(Class<? extends Exception>[] exceptionTypes, Exception e) {
 
         if (this.getSagaTransactionType() == SagaTransactionTypeEnum.ROLLBACK.getType()) {
             return true;
@@ -210,16 +198,10 @@ public class SagaTransactionEntity {
 
     /**
      * 是否需要重试判断
-     *
-     * @param exceptionTypes
-     * @param startCompensateAfterTransactionName
-     * @param e
-     * @param retryMaxTime
-     * @return
      */
     public boolean needRetryCheckAndAddRetryTime(Class<? extends Exception>[] exceptionTypes,
-                                                 String startCompensateAfterTransactionName, Exception e, Integer retryMaxTime) {
-        if (isCompensateExceptionType(exceptionTypes, startCompensateAfterTransactionName, e)
+                                                 Exception e, Integer retryMaxTime) {
+        if (isCompensateExceptionType(exceptionTypes, e)
                 && !exceedMaxRetryTimes(retryMaxTime)) {
             this.retryTime++;
             return true;
@@ -231,8 +213,7 @@ public class SagaTransactionEntity {
     /**
      * 是否命中重试策略
      */
-    public boolean isCompensateExceptionType(Class<? extends Exception>[] exceptionTypes,
-                                             String startCompensateAfterTransactionName, Exception e) {
+    public boolean isCompensateExceptionType(Class<? extends Exception>[] exceptionTypes,Exception e) {
         if (this.getSagaTransactionType() == SagaTransactionTypeEnum.RE_EXECUTE.getType()) {
             return true;
         }

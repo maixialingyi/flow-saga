@@ -2,7 +2,7 @@ package com.flow.saga.annotation;
 
 
 import com.flow.saga.entity.SagaTransactionTypeEnum;
-import com.flow.saga.exception.SagaTransactionCompensateException;
+import com.flow.saga.exception.SagaTransactionReExecuteException;
 import com.flow.saga.exception.SagaTransactionRollbackException;
 
 import java.lang.annotation.*;
@@ -28,11 +28,9 @@ public @interface SagaMainTransactionProcess {
     long retryInterval() default 1;
 
     // saga自身异常，导致重试
-    Class<? extends Exception>[] compensateExceptions() default { SagaTransactionCompensateException.class };
+    Class<? extends Exception>[] reExecuteExceptions() default { SagaTransactionReExecuteException.class };
 
     // saga自身异常，导致回滚
     Class<? extends Exception>[] rollbackExceptions() default { SagaTransactionRollbackException.class };
-
-    String startCompensateAfterTransactionName() default "";
 
 }

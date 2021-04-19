@@ -14,7 +14,7 @@ public class ConfigByExceptionSagaTransactionExceptionHandler extends BaseRuntim
     public void handleException(SagaTransactionContext context, Exception e) {
         SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();
 
-        // 捕获到补偿异常，说明saga flow状态为补偿失败（否则异常不会抛到顶层saga中），直接抛出到业务处理方法
+        // 回滚
         if (context.needRollback(e)) {
             log.debug("[RuntimeSagaTransactionProcess]流程{}, 流程类型{}, 根据回滚异常处理回滚开始,业务流水号:{}",
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
@@ -26,7 +26,7 @@ public class ConfigByExceptionSagaTransactionExceptionHandler extends BaseRuntim
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                     sagaTransactionEntity.getBizSerialNo());
 
-        } else if (context.isCompensateExceptionType(e)) {
+        } else if (context.isCompensateExceptionType(e)) {//重试
             sagaTransactionEntity.fail();
             log.error("[RuntimeSagaTransactionProcess]流程{}, 流程类型{}, 根据补偿异常补偿失败,业务流水号:{}",
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
