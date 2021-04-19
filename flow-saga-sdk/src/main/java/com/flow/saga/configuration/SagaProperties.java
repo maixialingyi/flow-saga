@@ -14,16 +14,6 @@ public class SagaProperties {
     private boolean asyncCancel = false;
 
     /**
-     * 是否并发执行Participant的cancel
-     */
-    private boolean concurrentCancel = false;
-
-    /**
-     * 等待并发cancel处理完成的超时时间
-     */
-    private int waitConcurrentCancelTimeoutInMs = 10000;
-
-    /**
      * 是否保存子事务
      */
     private boolean persistSubTransaction = true;

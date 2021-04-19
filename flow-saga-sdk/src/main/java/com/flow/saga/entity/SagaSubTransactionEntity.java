@@ -78,7 +78,6 @@ public class SagaSubTransactionEntity {
     private InvocationContext successInvocationContext;
     private InvocationContext failInvocationContext;
     private InvocationContext rollbackInvocationContext;
-    private SagaSubTransaction sagaSubTransaction;
     private Class<? extends Exception>[] compensateExceptions;
     private Class<? extends Exception>[] rollbackExceptions;
 
@@ -94,10 +93,6 @@ public class SagaSubTransactionEntity {
 
     public void success() {
         this.transactionStatus = SagaTransactionStatus.SUCCESS.getStatus();
-    }
-
-    public void fail() {
-        this.transactionStatus = SagaTransactionStatus.FAIL.getStatus();
     }
 
     public void fail(String errorMsg) {

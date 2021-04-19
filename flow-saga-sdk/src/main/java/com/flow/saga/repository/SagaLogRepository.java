@@ -80,11 +80,6 @@ public class SagaLogRepository implements ISagaLogRepository {
 
     /**
      * 分批查询创建时间范围的SagaTransactionEntity
-     *
-     * @param startTime
-     * @param endTime
-     * @param limit
-     * @return
      */
     @Override
     public List<SagaTransactionEntity> querySagaTransactionByCreateTimeInBatch(Long startTime, Long endTime,
@@ -94,9 +89,6 @@ public class SagaLogRepository implements ISagaLogRepository {
 
     /**
      * 按照创建时间查询分批查询创建时间范围的SagaTransactionEntity
-     *
-     * @param createTime
-     * @return
      */
     @Override
     public List<SagaTransactionEntity> querySagaTransactionByCreateTime(Long createTime) {
