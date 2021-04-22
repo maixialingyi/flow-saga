@@ -46,7 +46,7 @@ public class BaseRuntimeSagaTransactionExceptionHandler {
                         sagaSubTransactionEntity.rollbackSuccess();
                     } catch (Exception ee) {
                         sagaSubTransactionEntity.rollbackFail();
-                        log.error("[RuntimeSagaSubTransactionProcess]子流程{}, 处理子事务回滚，反射执行子事务回滚方法失败, 业务流水号:{}",
+                        log.error("[SagaSubTransactionProcess]子流程{}, 处理子事务回滚，反射执行子事务回滚方法失败, 业务流水号:{}",
                                 sagaSubTransactionEntity.getSubTransactionName(),
                                 sagaSubTransactionEntity.getBizSerialNo(), ee);
                     }
@@ -77,7 +77,7 @@ public class BaseRuntimeSagaTransactionExceptionHandler {
                 sagaTransactionEntity.rollbackSuccess();
             } catch (Exception e1) {
                 sagaTransactionEntity.rollbackFail();
-                log.error("[RuntimeSagaTransactionProcess]流程{}, 处理事务回滚，反射执行事务回滚方法失败, 业务流水号:{}",
+                log.error("[SagaSubTransactionProcess]流程{}, 处理事务回滚，反射执行事务回滚方法失败, 业务流水号:{}",
                         sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getBizSerialNo(), e1);
             }
         } else {

@@ -25,13 +25,13 @@ public class SagaSubTransactionRecoverInterceptor {
 
         if (sagaSubTransactionEntity != null
                 && sagaSubTransactionEntity.getTransactionStatus() == SagaTransactionStatus.SUCCESS.getStatus()) {
-            log.debug("[RuntimeSagaSubTransactionProcess]子流程{}已执行成功，跳过执行, 业务流水号:{}",
+            log.debug("[SagaSubTransactionProcess]子流程{}已执行成功，跳过执行, 业务流水号:{}",
                     sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo());
             return sagaSubTransactionEntity.getAndConstructReturnValue();
         } else if (sagaSubTransactionEntity != null && (sagaSubTransactionEntity
                 .getTransactionStatus() == SagaTransactionStatus.ROBACK_SUCCESS.getStatus()
                 || sagaSubTransactionEntity.getTransactionStatus() == SagaTransactionStatus.ROBACK_FAIL.getStatus())) {
-            log.debug("[RuntimeSagaSubTransactionProcess]子流程{}已执行回滚，跳过执行, 业务流水号:{}",
+            log.debug("[SagaSubTransactionProcess]子流程{}已执行回滚，跳过执行, 业务流水号:{}",
                     sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo());
             return sagaSubTransactionEntity.getAndConstructReturnValue();
         } else if (sagaSubTransactionEntity != null

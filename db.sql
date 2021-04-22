@@ -1,3 +1,5 @@
+CREATE DATABASE flow_saga;
+
 CREATE TABLE `saga_transaction_log` (
   `id` bigint(20) NOT NULL,
   `shard_routing_key` bigint(20) NOT NULL DEFAULT '0' COMMENT '分库分表路由键',
@@ -21,7 +23,7 @@ CREATE TABLE `saga_transaction_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='业务流程记录表';
 
 
-CREATE TABLE `saga_sub_transaction_log5` (
+CREATE TABLE `saga_sub_transaction_log` (
   `id` bigint(20) NOT NULL,
   `shard_routing_key` bigint(20) NOT NULL DEFAULT '0' COMMENT '分库分表路由键',
   `saga_transaction_id` bigint(20) NOT NULL COMMENT '主流程ID',

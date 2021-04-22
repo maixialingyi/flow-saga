@@ -18,7 +18,7 @@ public class SagaTransactionManager extends BaseSagaTransactionManager {
 
         context.addLayerCount();
         if (context.getLayerCount() > 1) {
-            log.debug("[RuntimeSagaTransactionProcess]流程{}已经存在顶层saga事务，加入当前事务, 流程类型{}, 业务流水号:{}",
+            log.debug("[SagaSubTransactionProcess]流程{}已经存在顶层saga事务，加入当前事务, 流程类型{}, 业务流水号:{}",
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                     sagaTransactionEntity.getBizSerialNo());
             return;
@@ -27,7 +27,7 @@ public class SagaTransactionManager extends BaseSagaTransactionManager {
         super.saveSagaTransaction(sagaTransactionEntity);
 
         // 调用被代理类的方法执行流程
-        log.debug("[RuntimeSagaTransactionProcess]流程{}开始, 流程类型{}, 业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]流程{}开始, 流程类型{}, 业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                 sagaTransactionEntity.getBizSerialNo());
     }

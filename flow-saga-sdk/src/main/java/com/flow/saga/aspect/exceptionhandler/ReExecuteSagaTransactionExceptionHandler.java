@@ -15,7 +15,7 @@ public class ReExecuteSagaTransactionExceptionHandler extends BaseRuntimeSagaTra
         SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();
         sagaTransactionEntity.fail();
 
-        log.error("[RuntimeSagaTransactionProcess]流程{}, 流程类型{}, 补偿失败, 业务流水号:{}",
+        log.error("[SagaSubTransactionProcess]流程{}, 流程类型{}, 补偿失败, 业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                 sagaTransactionEntity.getBizSerialNo());
 

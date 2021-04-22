@@ -15,7 +15,7 @@ public class SagaSubTransactionInterceptor {
     private SagaTransactionManager sagaTransactionManager;
 
     public Object intercept(ProceedingJoinPoint joinPoint,
-                            SagaSubTransactionProcess runtimeSagaSubTransactionProcess) throws Throwable {
+                            SagaSubTransactionProcess SagaSubTransactionProcess) throws Throwable {
 
         SagaTransactionContext context = SagaTransactionContextHolder.getSagaTransactionContext();
         if (context == null) {
@@ -25,7 +25,7 @@ public class SagaSubTransactionInterceptor {
         SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();
 
         SagaSubTransactionEntity sagaSubTransactionEntity = SagaSubTransactionEntityInitFactory.initSagaSubTransactionEntity(joinPoint,
-                runtimeSagaSubTransactionProcess, sagaTransactionEntity);
+                SagaSubTransactionProcess, sagaTransactionEntity);
 
         sagaTransactionManager.addSubTransaction(context, sagaSubTransactionEntity);
 

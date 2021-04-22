@@ -47,7 +47,7 @@ public class BaseSagaTransactionManager {
         this.successTransactionProcess(sagaTransactionEntity);
         // 修改主，子事务状态为执行成功
         this.updateSagaTransaction(sagaTransactionEntity);
-        log.debug("[RuntimeSagaTransactionProcess]流程{}结束, 流程类型{}, 业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]流程{}结束, 流程类型{}, 业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                 sagaTransactionEntity.getBizSerialNo());
     }
@@ -70,11 +70,11 @@ public class BaseSagaTransactionManager {
             sagaTransactionExceptionHandlerDispatcher.handleException(context, e);
         } catch (Exception e1) {
             // 框架处理失败产生异常
-            log.error("[RuntimeSagaTransactionProcess]流程{}异常, 框架处理失败, 流程类型{}, 业务流水号:{}",
+            log.error("[SagaSubTransactionProcess]流程{}异常, 框架处理失败, 流程类型{}, 业务流水号:{}",
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                     sagaTransactionEntity.getBizSerialNo(), e1);
         }
-        log.debug("[RuntimeSagaTransactionProcess]流程{}异常, 异常处理结束, 流程类型{}, 业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]流程{}异常, 异常处理结束, 流程类型{}, 业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                 sagaTransactionEntity.getBizSerialNo());
         // 执行失败更新saga flow上下文
@@ -96,7 +96,7 @@ public class BaseSagaTransactionManager {
                 sagaTransactionExceptionHandlerDispatcher.handleException(context, e);
             } catch (Exception e1) {
                 // 框架处理失败产生异常
-                log.error("[RuntimeSagaTransactionProcess]流程{}异常, 框架处理失败, 流程类型{}, 业务流水号:{}",
+                log.error("[SagaSubTransactionProcess]流程{}异常, 框架处理失败, 流程类型{}, 业务流水号:{}",
                         sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                         sagaTransactionEntity.getBizSerialNo(), e1);
             }
@@ -104,7 +104,7 @@ public class BaseSagaTransactionManager {
             this.failTransactionProcess(sagaTransactionEntity, e);
             // 执行失败更新saga flow上下文
             this.updateSagaTransaction(sagaTransactionEntity);
-            log.debug("[RuntimeSagaTransactionProcess]流程{}异常, 异步异常处理结束, 流程类型{}, 业务流水号:{}",
+            log.debug("[SagaSubTransactionProcess]流程{}异常, 异步异常处理结束, 流程类型{}, 业务流水号:{}",
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                     sagaTransactionEntity.getBizSerialNo());
         });
@@ -117,7 +117,7 @@ public class BaseSagaTransactionManager {
         sagaSubTransactionEntity.success();
         this.updateSagaSubTransaction(sagaSubTransactionEntity);
 
-        log.debug("[RuntimeSagaSubTransactionProcess]子流程{}结束, 业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]子流程{}结束, 业务流水号:{}",
                 sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo());
     }
 
@@ -125,7 +125,7 @@ public class BaseSagaTransactionManager {
                                                 SagaSubTransactionEntity sagaSubTransactionEntity, ProceedingJoinPoint joinPoint, Throwable e)
             throws Throwable {
 
-        log.warn("[RuntimeSagaSubTransactionProcess]子流程{}执行失败，异常处理, 业务流水号:{}",
+        log.warn("[SagaSubTransactionProcess]子流程{}执行失败，异常处理, 业务流水号:{}",
                 sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo(), e);
         // 是否需要重试判断
         SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();
@@ -135,7 +135,7 @@ public class BaseSagaTransactionManager {
                     TimeUnit.MILLISECONDS);
             try {
                 // 重试成功直接返回
-                log.debug("[RuntimeSagaSubTransactionProcess]子流程{}重试执行开始，执行次数{}, 业务流水号:{}",
+                log.debug("[SagaSubTransactionProcess]子流程{}重试执行开始，执行次数{}, 业务流水号:{}",
                         sagaSubTransactionEntity.getSubTransactionName(), sagaTransactionEntity.getRetryTime(),
                         sagaSubTransactionEntity.getBizSerialNo());
                 Object object = joinPoint.proceed();
@@ -144,7 +144,7 @@ public class BaseSagaTransactionManager {
                 return object;
             } catch (Throwable e1) {
                 e = e1;
-                log.warn("[RuntimeSagaSubTransactionProcess]子流程{}执行重试失败，执行次数{}, 业务流水号:{}",
+                log.warn("[SagaSubTransactionProcess]子流程{}执行重试失败，执行次数{}, 业务流水号:{}",
                         sagaSubTransactionEntity.getSubTransactionName(), sagaTransactionEntity.getRetryTime(),
                         sagaSubTransactionEntity.getBizSerialNo(), e);
             }
@@ -153,7 +153,7 @@ public class BaseSagaTransactionManager {
         sagaSubTransactionEntity.fail(e.getMessage());
         this.updateSagaSubTransaction(sagaSubTransactionEntity);
 
-        log.warn("[RuntimeSagaSubTransactionProcess]子流程{}执行异常,  业务流水号:{}",
+        log.warn("[SagaSubTransactionProcess]子流程{}执行异常,  业务流水号:{}",
                 sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo(), e);
 
         throw e;
@@ -163,7 +163,7 @@ public class BaseSagaTransactionManager {
         context.getSagaTransactionEntity().addSubTransaction(sagaSubTransactionEntity);
         context.setCurrentSagaSubTransaction(sagaSubTransactionEntity);
         this.saveSagaSubTransaction(sagaSubTransactionEntity);
-        log.debug("[RuntimeSagaSubTransactionProcess]子流程{}开始, 业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]子流程{}开始, 业务流水号:{}",
                 sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo());
     }
 
@@ -200,7 +200,7 @@ public class BaseSagaTransactionManager {
             Object service = BeanUtil.getBean(successInvocation.getTargetClass());
             ReflectionUtils.invokeMethod(successInvocation.getMethod(), service,sagaTransactionEntity.getAndConstructParamValues());
         } catch (Exception e) {
-            log.error("[RuntimeSagaTransactionProcess]流程{}, 框架处理成功，执行成功方法失败, 流程类型{}, 业务流水号:{}",
+            log.error("[SagaSubTransactionProcess]流程{}, 框架处理成功，执行成功方法失败, 流程类型{}, 业务流水号:{}",
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                     sagaTransactionEntity.getBizSerialNo(), e);
         }
@@ -222,7 +222,7 @@ public class BaseSagaTransactionManager {
             }
             ReflectionUtils.invokeMethod(failInvocationContext.getMethod(), service, paramsWithException);
         } catch (Exception ee) {
-            log.error("[RuntimeSagaTransactionProcess]流程{}, 框架处理失败，执行失败方法失败, 流程类型{}, 业务流水号:{}",
+            log.error("[SagaSubTransactionProcess]流程{}, 框架处理失败，执行失败方法失败, 流程类型{}, 业务流水号:{}",
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                     sagaTransactionEntity.getBizSerialNo(), ee);
         }
@@ -239,7 +239,7 @@ public class BaseSagaTransactionManager {
             ReflectionUtils.invokeMethod(successInvocationContext.getMethod(), service,
                     sagaSubTransactionEntity.getAndConstructParamValues());
         } catch (Exception e) {
-            log.error("[RuntimeSagaSubTransactionProcess]子流程{}, 框架处理成功，执行成功方法失败, 业务流水号:{}",
+            log.error("[SagaSubTransactionProcess]子流程{}, 框架处理成功，执行成功方法失败, 业务流水号:{}",
                     sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo(), e);
         }
 
@@ -261,7 +261,7 @@ public class BaseSagaTransactionManager {
             }
             ReflectionUtils.invokeMethod(failInvocationContext.getMethod(), service, paramsWithException);
         } catch (Exception ee) {
-            log.error("[RuntimeSagaSubTransactionProcess]子流程{}, 框架处理失败，执行失败方法失败, 业务流水号:{}",
+            log.error("[SagaSubTransactionProcess]子流程{}, 框架处理失败，执行失败方法失败, 业务流水号:{}",
                     sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo(), ee);
         }
 
@@ -283,7 +283,7 @@ public class BaseSagaTransactionManager {
         try {
             sagaLogRepository.updateSagaTransactionEntity(sagaTransactionEntity);
         } catch (Exception e) {
-            String message = MessageFormatter.format("[RuntimeSagaTransactionProcess]流程{}更新失败, 流程类型{}, 业务流水号:{}",
+            String message = MessageFormatter.format("[SagaSubTransactionProcess]流程{}更新失败, 流程类型{}, 业务流水号:{}",
                     new Object[] { sagaTransactionEntity.getSagaTransactionName(),
                             sagaTransactionEntity.getSagaTransactionType(), sagaTransactionEntity.getBizSerialNo() })
                     .getMessage();
@@ -295,7 +295,7 @@ public class BaseSagaTransactionManager {
         try {
             sagaLogRepository.saveSagaTransactionEntity(sagaTransactionEntity);
         } catch (Exception e) {
-            String message = MessageFormatter.format("[RuntimeSagaTransactionProcess]流程{}初始化失败, 流程类型{}, 业务流水号:{}",
+            String message = MessageFormatter.format("[SagaSubTransactionProcess]流程{}初始化失败, 流程类型{}, 业务流水号:{}",
                     new Object[] { sagaTransactionEntity.getSagaTransactionName(),
                             sagaTransactionEntity.getSagaTransactionType(), sagaTransactionEntity.getBizSerialNo() })
                     .getMessage();
@@ -316,7 +316,7 @@ public class BaseSagaTransactionManager {
         try {
             sagaLogRepository.updateSagaSubTransactionEntity(sagaSubTransactionEntity);
         } catch (Exception e) {
-            String message = MessageFormatter.format("[RuntimeSagaSubTransactionProcess]子流程{}更新失败, 业务流水号:{}",
+            String message = MessageFormatter.format("[SagaSubTransactionProcess]子流程{}更新失败, 业务流水号:{}",
                     new Object[] { sagaSubTransactionEntity.getSubTransactionName(),
                             sagaSubTransactionEntity.getBizSerialNo() })
                     .getMessage();
@@ -331,7 +331,7 @@ public class BaseSagaTransactionManager {
         try {
             sagaLogRepository.saveSagaSubTransactionEntity(sagaSubTransactionEntity);
         } catch (Exception e) {
-            String message = MessageFormatter.format("[RuntimeSagaSubTransactionProcess]子流程{}初始化失败, 业务流水号:{}",
+            String message = MessageFormatter.format("[SagaSubTransactionProcess]子流程{}初始化失败, 业务流水号:{}",
                     new Object[] { sagaSubTransactionEntity.getSubTransactionName(),
                             sagaSubTransactionEntity.getBizSerialNo() })
                     .getMessage();

@@ -27,11 +27,11 @@ public class SagaMainTransactionInterceptor {
     private SagaTransactionManager sagaTransactionManager;
 
     public Object intercept(ProceedingJoinPoint joinPoint,
-                            SagaMainTransactionProcess runtimeSagaTransactionProcess,
+                            SagaMainTransactionProcess SagaSubTransactionProcess,
                             boolean recover) throws Throwable {
 
         // 初始化上下文
-        SagaTransactionContext sagaTransactionContext = this.initSagaMianTransactionContext(joinPoint, runtimeSagaTransactionProcess, recover);
+        SagaTransactionContext sagaTransactionContext = this.initSagaMianTransactionContext(joinPoint, SagaSubTransactionProcess, recover);
 
         try {
             //保存saga log
@@ -57,7 +57,7 @@ public class SagaMainTransactionInterceptor {
 
     /**  初始化上下文  */
     private SagaTransactionContext initSagaMianTransactionContext(ProceedingJoinPoint joinPoint,
-                                                              SagaMainTransactionProcess runtimeSagaTransactionProcess,
+                                                              SagaMainTransactionProcess SagaSubTransactionProcess,
                                                               Boolean recover) {
 
         // 默认传播行为PROPAGATION_REQUIRED（如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中）
@@ -81,18 +81,18 @@ public class SagaMainTransactionInterceptor {
             Object value = getAnnotationStrFromParam(joinPoint, methodSignature, BizSerialNo.class);
             bizSerialNo = value != null ? String.valueOf(value) : "";
         } catch (IllegalAccessException e) {
-            log.warn("[RuntimeSagaTransactionProcess]流程{}获取业务流水号失败, 流程类型{}, 业务流水号:{}",
-                    runtimeSagaTransactionProcess.sagaTransactionName(),
-                    runtimeSagaTransactionProcess.sagaTransactionType().getType(), bizSerialNo, e);
+            log.warn("[SagaSubTransactionProcess]流程{}获取业务流水号失败, 流程类型{}, 业务流水号:{}",
+                    SagaSubTransactionProcess.sagaTransactionName(),
+                    SagaSubTransactionProcess.sagaTransactionType().getType(), bizSerialNo, e);
         }
         Long shardRoutingKey = 0L;
         try {
             Object value = getAnnotationStrFromParam(joinPoint, methodSignature, ShardRoutingKey.class);
             shardRoutingKey = value != null ? (long) value : 0L;
         } catch (IllegalAccessException e) {
-            log.warn("[RuntimeSagaTransactionProcess]流程{}获取分库分表路由键失败, 流程类型{}, 业务流水号:{}",
-                    runtimeSagaTransactionProcess.sagaTransactionName(),
-                    runtimeSagaTransactionProcess.sagaTransactionType().getType(), bizSerialNo, e);
+            log.warn("[SagaSubTransactionProcess]流程{}获取分库分表路由键失败, 流程类型{}, 业务流水号:{}",
+                    SagaSubTransactionProcess.sagaTransactionName(),
+                    SagaSubTransactionProcess.sagaTransactionType().getType(), bizSerialNo, e);
         }
         if (joinPoint.getArgs() != null) {
             for (int i = 0; i < joinPoint.getArgs().length; i++) {
@@ -102,7 +102,7 @@ public class SagaMainTransactionInterceptor {
             }
         }
 
-        String sagaTransactionName = runtimeSagaTransactionProcess.sagaTransactionName();
+        String sagaTransactionName = SagaSubTransactionProcess.sagaTransactionName();
         Class<?> targetClass = joinPoint.getTarget().getClass();
         Method[] methods = targetClass.getDeclaredMethods();
 
@@ -146,7 +146,7 @@ public class SagaMainTransactionInterceptor {
         sagaTransactionEntity.setParamJson(JsonUtil.toJson(paramJsonList));
         sagaTransactionEntity.setParamTypeJson(JsonUtil.toJson(paramTypeList));
         sagaTransactionEntity.setTransactionStatus(SagaTransactionStatus.INIT.getStatus());
-        sagaTransactionEntity.setSagaTransactionType(runtimeSagaTransactionProcess.sagaTransactionType().getType());
+        sagaTransactionEntity.setSagaTransactionType(SagaSubTransactionProcess.sagaTransactionType().getType());
         sagaTransactionEntity.setSagaSubTransactionEntities(Lists.newArrayList());
         sagaTransactionEntity.setRecover(recover);
         sagaTransactionEntity.setRetryTime(0);// 设置重试次数的初始值
@@ -155,11 +155,11 @@ public class SagaMainTransactionInterceptor {
         sagaTransactionEntity.setRollbackInvocationContext(rollbackInvocationContext);
 
         SagaTransactionConfig sagaTransactionConfig = new SagaTransactionConfig();
-        sagaTransactionConfig.setSagaTransactionType(runtimeSagaTransactionProcess.sagaTransactionType());
-        sagaTransactionConfig.setReExecuteExceptionList(runtimeSagaTransactionProcess.reExecuteExceptions());
-        sagaTransactionConfig.setRollbackExceptionList(runtimeSagaTransactionProcess.rollbackExceptions());
-        sagaTransactionConfig.setRetryTime(runtimeSagaTransactionProcess.retryTime());
-        sagaTransactionConfig.setRetryInterval(runtimeSagaTransactionProcess.retryInterval());
+        sagaTransactionConfig.setSagaTransactionType(SagaSubTransactionProcess.sagaTransactionType());
+        sagaTransactionConfig.setReExecuteExceptionList(SagaSubTransactionProcess.reExecuteExceptions());
+        sagaTransactionConfig.setRollbackExceptionList(SagaSubTransactionProcess.rollbackExceptions());
+        sagaTransactionConfig.setRetryTime(SagaSubTransactionProcess.retryTime());
+        sagaTransactionConfig.setRetryInterval(SagaSubTransactionProcess.retryInterval());
 
         return SagaTransactionContext.builder().sagaTransactionEntity(sagaTransactionEntity)
                 .sagaTransactionConfig(sagaTransactionConfig).build();

@@ -27,10 +27,10 @@ public @interface SagaMainTransactionProcess {
     // 补偿的重试时间间隔，单位毫秒
     long retryInterval() default 1;
 
-    // saga自身异常，导致重试
+    // 全局需重试异常集合
     Class<? extends Exception>[] reExecuteExceptions() default { SagaTransactionReExecuteException.class };
 
-    // saga自身异常，导致回滚
+    // 全局需回滚异常集合
     Class<? extends Exception>[] rollbackExceptions() default { SagaTransactionRollbackException.class };
 
 }

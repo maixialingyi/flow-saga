@@ -22,7 +22,7 @@
 
   <sql id="Base_Column_List">
     id, shard_routing_key, saga_transaction_name, biz_serial_no, saga_transaction_class_name, saga_transaction_class_method_name, transaction_status,
-    retry_time, saga_transaction_type, recover, saga_type, error_msg, version, create_time, update_time, param_json, param_type_json
+    retry_time, saga_transaction_type, recover, error_msg, version, create_time, update_time, param_json, param_type_json
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap">
@@ -36,12 +36,12 @@
   <insert id="insert" parameterType="com.flow.saga.entity.SagaTransactionEntity">
     insert into saga_transaction_log (id, shard_routing_key, saga_transaction_name, biz_serial_no,
       saga_transaction_class_name, saga_transaction_class_method_name, transaction_status,
-      retry_time, saga_transaction_type, recover, saga_type, error_msg, version,
+      retry_time, saga_transaction_type, recover, error_msg, version,
       create_time, update_time, param_json,
       param_type_json)
     values (#{id,jdbcType=BIGINT}, #{shardRoutingKey,jdbcType=BIGINT}, #{sagaTransactionName,jdbcType=VARCHAR}, #{bizSerialNo,jdbcType=VARCHAR},
       #{sagaTransactionClassName,jdbcType=VARCHAR}, #{sagaTransactionClassMethodName,jdbcType=VARCHAR}, #{transactionStatus,jdbcType=INTEGER},
-      #{retryTime,jdbcType=INTEGER}, #{sagaTransactionType,jdbcType=INTEGER}, #{recover,jdbcType=INTEGER}, #{sagaType,jdbcType=INTEGER},
+      #{retryTime,jdbcType=INTEGER}, #{sagaTransactionType,jdbcType=INTEGER}, #{recover,jdbcType=INTEGER},
       #{errorMsg,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT},
       #{paramJson,jdbcType=LONGVARCHAR}, #{paramTypeJson,jdbcType=LONGVARCHAR})
   </insert>
@@ -77,9 +77,6 @@
       </if>
       <if test="recover != null">
         recover,
-      </if>
-      <if test="sagaType != null">
-        saga_type,
       </if>
       <if test="errorMsg != null">
         error_msg,
@@ -131,9 +128,6 @@
       <if test="recover != null">
         #{recover,jdbcType=INTEGER},
       </if>
-      <if test="sagaType != null">
-        #{sagaType,jdbcType=INTEGER},
-      </if>
       <if test="errorMsg != null">
         #{errorMsg,jdbcType=VARCHAR},
       </if>
@@ -181,9 +175,6 @@
       <if test="recover != null">
         recover = #{recover,jdbcType=INTEGER},
       </if>
-      <if test="sagaType != null">
-        saga_type = #{sagaType,jdbcType=INTEGER},
-      </if>
       <if test="errorMsg != null">
         error_msg = #{errorMsg,jdbcType=VARCHAR},
       </if>
@@ -216,7 +207,6 @@
       retry_time = #{retryTime,jdbcType=INTEGER},
       saga_transaction_type = #{sagaTransactionType,jdbcType=INTEGER},
       recover = #{recover,jdbcType=INTEGER},
-      saga_type = #{sagaType,jdbcType=INTEGER},
       error_msg = #{errorMsg,jdbcType=VARCHAR},
       version = #{version,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=BIGINT},

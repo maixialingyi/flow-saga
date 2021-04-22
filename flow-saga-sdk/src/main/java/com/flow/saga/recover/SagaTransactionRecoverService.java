@@ -54,14 +54,14 @@ public class SagaTransactionRecoverService{
             // 执行方法
             ReflectionUtils.invokeMethod(method, service, sagaTransactionEntity.getAndConstructParamValues());
         } catch (Exception e) {
-            log.error("[RuntimeSagaTransactionProcess]流程{}异常, 离线恢复异常, 流程类型{}, 业务流水号:{}",
+            log.error("[SagaSubTransactionProcess]流程{}异常, 离线恢复异常, 流程类型{}, 业务流水号:{}",
                     sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                     sagaTransactionEntity.getBizSerialNo(), e);
         } finally {
             SagaTransactionContextHolder.clearSagaTransactionContext();
         }
 
-        log.debug("[RuntimeSagaTransactionProcess]流程{}异常, 离线恢复完成, 流程类型{}, 业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]流程{}异常, 离线恢复完成, 流程类型{}, 业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                 sagaTransactionEntity.getBizSerialNo());
     }

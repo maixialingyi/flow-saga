@@ -1,0 +1,26 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: test #服务名称
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource  #当前数据源操作类型
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/flow_saga?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    username: root
+    password: 890812jsy@
+    tomcat:
+      max-active: 50
+      initial-size: 5
+      min-idle: 1
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+
+swagger:
+  enable: true

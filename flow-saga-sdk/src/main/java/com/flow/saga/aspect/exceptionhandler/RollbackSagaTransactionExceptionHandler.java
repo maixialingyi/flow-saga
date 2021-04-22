@@ -13,11 +13,11 @@ public class RollbackSagaTransactionExceptionHandler extends BaseRuntimeSagaTran
     @Override
     public void handleException(SagaTransactionContext sagaTransactionContext, Exception e) {
         SagaTransactionEntity sagaTransactionEntity = sagaTransactionContext.getSagaTransactionEntity();
-        log.debug("[RuntimeSagaTransactionProcess]流程{}, 流程类型{}, 处理回滚开始,业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]流程{}, 流程类型{}, 处理回滚开始,业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                 sagaTransactionEntity.getBizSerialNo());
         super.handleRollback(sagaTransactionEntity, e);
-        log.debug("[RuntimeSagaTransactionProcess]流程{}, 流程类型{}, 处理回滚结束,业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]流程{}, 流程类型{}, 处理回滚结束,业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                 sagaTransactionEntity.getBizSerialNo());
     }

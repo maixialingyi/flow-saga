@@ -22,7 +22,7 @@ public class SagaTransactionRecoverManager extends BaseSagaTransactionManager {
         sagaTransactionEntity.setRecover(true);
         super.updateSagaTransaction(sagaTransactionEntity);
         context.addLayerCount();
-        log.debug("[RuntimeSagaTransactionProcess]流程{}恢复开始, 流程类型{}, 业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]流程{}恢复开始, 流程类型{}, 业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                 sagaTransactionEntity.getBizSerialNo());
     }
@@ -42,7 +42,7 @@ public class SagaTransactionRecoverManager extends BaseSagaTransactionManager {
 
     public void updateSubTransaction(SagaSubTransactionEntity sagaSubTransactionEntity) {
         this.updateSagaSubTransaction(sagaSubTransactionEntity);
-        log.debug("[RuntimeSagaSubTransactionProcess]子流程{}开始, 业务流水号:{}",
+        log.debug("[SagaSubTransactionProcess]子流程{}开始, 业务流水号:{}",
                 sagaSubTransactionEntity.getSubTransactionName(), sagaSubTransactionEntity.getBizSerialNo());
     }
 
