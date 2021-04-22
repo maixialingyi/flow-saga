@@ -19,6 +19,8 @@ public class TestFlowSagaController {
     @GetMapping("/testNormal")
     public Object testNormal(){
         FlowSagaServiceRequestDTO requestDTO = new FlowSagaServiceRequestDTO();
+        requestDTO.setBizSerialNo(String.valueOf(System.currentTimeMillis()));
+        requestDTO.setUserId(1l);
         return testNormalFlowSagaServiceImpl.testMainFlowNomal(requestDTO);
     }
 

@@ -27,44 +27,50 @@ public class TestNormalFlowSagaServiceImpl {
             retryTime = 3,
             retryInterval = 1000)
     public FlowSagaServiceResponseDTO testTransactionMainFlowEx(FlowSagaServiceRequestDTO requestDTO){
+        testSubFlowEx_1(requestDTO);
+        testSubFlowEx_2(requestDTO);
+        log.info("主事务test-main-flow-ex执行成功");
         return null;
     }
 
     @SagaMainTransactionSuccess(sagaTransactionName = "test-main-flow-ex")
     public FlowSagaServiceResponseDTO testTransactionMainFlowExSuccess(FlowSagaServiceRequestDTO requestDTO){
+        log.info("主事务test-main-flow-ex执行成功后__回调方法");
         return null;
     }
     @SagaMainTransactionRollback(sagaTransactionName = "test-main-flow-ex")
     public FlowSagaServiceResponseDTO testTransactionMainFlowExRollback(FlowSagaServiceRequestDTO requestDTO,Exception e){
+        log.info("主事务test-main-flow-ex执行回滚__回调方法");
         return null;
     }
     @SagaMainTransactionFail(sagaTransactionName = "test-main-flow-ex")
     public FlowSagaServiceResponseDTO testTransactionMainFlowExFail(FlowSagaServiceRequestDTO requestDTO,Exception e){
+        log.info("主事务test-main-flow-ex执行失败后__回调方法");
         return null;
     }
 
     /** 子事务1*/
     @SagaSubTransactionProcess(sagaSubTransactionName = "test-sub-flow-ex-1")
     public FlowSagaServiceResponseDTO testSubFlowEx_1(FlowSagaServiceRequestDTO requestDTO){
-        log.info("mylog --- 子事务__1__执行成功");
+        log.info("子事务test-sub-flow-ex-1执行成功");
         return null;
     }
 
     @SagaSubTransactionSuccess(sagaSubTransactionName = "test-sub-flow-ex-1")
     public FlowSagaServiceResponseDTO testSubFlowEx_1_Success(FlowSagaServiceRequestDTO requestDTO,Exception e){
-        log.info("mylog --- 子事务__1__执行成功后__回调方法");
+        log.info("子事务test-sub-flow-ex-1执行成功后__回调方法");
         return null;
     }
 
     @SagaSubTransactionRollback(sagaSubTransactionName = "test-sub-flow-ex-1")
     public FlowSagaServiceResponseDTO testSubFlowEx_1_Rollback(FlowSagaServiceRequestDTO requestDTO,Exception e){
-        log.info("mylog --- 子事务__1__执行回滚__回调方法");
+        log.info("子事务test-sub-flow-ex-1执行回滚__回调方法");
         return null;
     }
 
     @SagaSubTransactionFail(sagaSubTransactionName = "test-sub-flow-ex-1")
     public FlowSagaServiceResponseDTO testSubFlowEx_1_Fail(FlowSagaServiceRequestDTO requestDTO,Exception e){
-        log.info("mylog --- 子事务__1__执行失败后__回调方法");
+        log.info("子事务test-sub-flow-ex-1执行失败后__回调方法");
         return null;
     }
 
@@ -83,25 +89,25 @@ public class TestNormalFlowSagaServiceImpl {
 
         // 先重试仍失败后回滚，回滚仍失败后 -> 恢复
         if(1==1){ throw new SagaFlowSystemException(); }
-        log.info("mylog --- 子事务__2__执行成功");
+        log.info("子事务test-sub-flow-ex-2执行成功");
         return null;
     }
 
     @SagaSubTransactionSuccess(sagaSubTransactionName = "test-sub-flow-ex-2")
     public FlowSagaServiceResponseDTO testSubFlowEx_2_Success(FlowSagaServiceRequestDTO requestDTO,Exception e){
-        log.info("mylog --- 子事务__2__执行成功后__回调方法");
+        log.info("子事务test-sub-flow-ex-2执行成功后__回调方法");
         return null;
     }
 
     @SagaSubTransactionRollback(sagaSubTransactionName = "test-sub-flow-ex-2")
     public FlowSagaServiceResponseDTO testSubFlowEx_2_Rollback(FlowSagaServiceRequestDTO requestDTO,Exception e){
-        log.info("mylog --- 子事务__2__执行回滚__回调方法");
+        log.info("子事务test-sub-flow-ex-2执行回滚__回调方法");
         return null;
     }
 
     @SagaSubTransactionFail(sagaSubTransactionName = "test-sub-flow-ex-2")
     public FlowSagaServiceResponseDTO testSubFlowEx_2_Fail(FlowSagaServiceRequestDTO requestDTO,Exception e){
-        log.info("mylog --- 子事务__2__执行失败后__回调方法");
+        log.info("子事务test-sub-flow-ex-2执行失败后__回调方法");
         return null;
     }
 
@@ -116,18 +122,18 @@ public class TestNormalFlowSagaServiceImpl {
     }
     @SagaMainTransactionSuccess(sagaTransactionName = "test-main-flow-nomal")
     public FlowSagaServiceResponseDTO testMainFlowNomalSuccess(FlowSagaServiceRequestDTO requestDTO){
-        log.info("mylog --- 主事务test-main-flow-nomal执行成功后__回调方法");
+        log.info("主事务test-main-flow-nomal执行成功后__回调方法");
         return null;
     }
 
     @SagaSubTransactionProcess(sagaSubTransactionName = "test-sub-flow-nomal-1")
     public FlowSagaServiceResponseDTO testSubFlowNomal_1(FlowSagaServiceRequestDTO requestDTO){
-        log.info("mylog --- 子事务test-sub-flow-nomal-执行成功");
+        log.info("子事务test-sub-flow-nomal-执行成功");
         return null;
     }
     @SagaSubTransactionSuccess(sagaSubTransactionName = "test-sub-flow-nomal-1")
     public FlowSagaServiceResponseDTO testSubFlowNomal_1_Success(FlowSagaServiceRequestDTO requestDTO){
-        log.info("mylog --- 子事务test-sub-flow-nomal-1执行成功后__回调方法");
+        log.info("子事务test-sub-flow-nomal-1执行成功后__回调方法");
         return null;
     }
 }

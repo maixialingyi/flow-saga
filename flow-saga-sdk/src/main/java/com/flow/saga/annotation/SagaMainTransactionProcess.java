@@ -28,9 +28,9 @@ public @interface SagaMainTransactionProcess {
     long retryInterval() default 1;
 
     // 全局需重试异常集合
-    Class<? extends Exception>[] reExecuteExceptions() default { SagaTransactionReExecuteException.class };
+    Class<? extends Exception>[] reExecuteExceptions() default {};
 
     // 全局需回滚异常集合
-    Class<? extends Exception>[] rollbackExceptions() default { SagaTransactionRollbackException.class };
+    Class<? extends Exception>[] rollbackExceptions() default {};
 
 }
