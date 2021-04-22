@@ -95,6 +95,10 @@ public class SagaSubTransactionEntity {
         this.transactionStatus = SagaTransactionStatus.SUCCESS.getStatus();
     }
 
+    public void fail() {
+        this.transactionStatus = SagaTransactionStatus.FAIL.getStatus();
+    }
+
     public void fail(String errorMsg) {
         errorMsg = errorMsg != null && errorMsg.length() > MAX_ERROR_MSG_LENGTH
                 ? errorMsg.substring(0, MAX_ERROR_MSG_LENGTH)

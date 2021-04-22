@@ -17,10 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author: songzeqi
- * @Date: 2019-07-11 5:44 PM
- */
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -71,7 +67,7 @@ public class SagaTransactionEntity {
      */
     private int sagaTransactionType;
     /**
-     * 是否离线补偿
+     * 是否离线恢复
      */
     private boolean recover = false;
     private String errorMsg = "";
@@ -99,6 +95,12 @@ public class SagaTransactionEntity {
             }
         }
         return false;
+
+    }
+
+    private static boolean containsSubTransaction(List<String> doneSubTransactionNames,
+                                                  String startCompensateAfterTransactionName) {
+        return doneSubTransactionNames.contains(startCompensateAfterTransactionName);
     }
 
     public boolean isFinish() {
@@ -262,7 +264,6 @@ public class SagaTransactionEntity {
         return classTypes;
     }
 
-    //获取成功后回调方法
     public InvocationContext getAndConstructSuccessInvocationContext() throws ClassNotFoundException {
         if (successInvocationContext != null) {
             return successInvocationContext;
