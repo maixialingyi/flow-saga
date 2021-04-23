@@ -1,7 +1,8 @@
 package com.flow.saga.controller;
 
 import com.flow.saga.service.FlowSagaServiceRequestDTO;
-import com.flow.saga.service.TestNormalFlowSagaServiceImpl;
+import com.flow.saga.service.TestExMainFlowSagaServiceImpl;
+import com.flow.saga.service.TestNormalMainFlowSagaServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestFlowSagaController {
 
     @Autowired
-    private TestNormalFlowSagaServiceImpl testNormalFlowSagaServiceImpl;
+    private TestNormalMainFlowSagaServiceImpl testNormalMainFlowSagaServiceImpl;
+
+    @Autowired
+    private TestExMainFlowSagaServiceImpl testExMainFlowSagaServiceImpl;
 
     @ApiOperation(value = "正常执行")
     @GetMapping("/testNormal")
@@ -21,14 +25,14 @@ public class TestFlowSagaController {
         FlowSagaServiceRequestDTO requestDTO = new FlowSagaServiceRequestDTO();
         requestDTO.setBizSerialNo(String.valueOf(System.currentTimeMillis()));
         requestDTO.setUserId(1l);
-        return testNormalFlowSagaServiceImpl.testMainFlowNomal(requestDTO);
+        return testNormalMainFlowSagaServiceImpl.testMainFlowNomal(requestDTO);
     }
 
     @ApiOperation(value = "异常测试")
     @GetMapping("/testEx")
     public Object testEx(){
         FlowSagaServiceRequestDTO requestDTO = new FlowSagaServiceRequestDTO();
-        return testNormalFlowSagaServiceImpl.testTransactionMainFlowEx(requestDTO);
+        return testExMainFlowSagaServiceImpl.testTransactionMainFlowEx(requestDTO);
     }
 
     @ApiOperation(value = "恢复")

@@ -47,7 +47,7 @@ public class BaseSagaTransactionManager {
         this.successTransactionProcess(sagaTransactionEntity);
         // 修改主，子事务状态为执行成功
         this.updateSagaTransaction(sagaTransactionEntity);
-        log.debug("[SagaSubTransactionProcess]流程{}结束, 流程类型{}, 业务流水号:{}",
+        log.debug("[SagaTransactionProcess]流程{}结束, 流程类型{}, 业务流水号:{}",
                 sagaTransactionEntity.getSagaTransactionName(), sagaTransactionEntity.getSagaTransactionType(),
                 sagaTransactionEntity.getBizSerialNo());
     }
@@ -295,7 +295,7 @@ public class BaseSagaTransactionManager {
         try {
             sagaLogRepository.saveSagaTransactionEntity(sagaTransactionEntity);
         } catch (Exception e) {
-            String message = MessageFormatter.format("[SagaSubTransactionProcess]流程{}初始化失败, 流程类型{}, 业务流水号:{}",
+            String message = MessageFormatter.format("[SagaTransactionProcess]流程{}初始化失败, 流程类型{}, 业务流水号:{}",
                     new Object[] { sagaTransactionEntity.getSagaTransactionName(),
                             sagaTransactionEntity.getSagaTransactionType(), sagaTransactionEntity.getBizSerialNo() })
                     .getMessage();

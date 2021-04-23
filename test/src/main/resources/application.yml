@@ -24,3 +24,7 @@ spring:
 
 swagger:
   enable: true
+
+saga:
+  asyncCancel: false #回滚是否异步执行
+  persistSubTransaction: true #是否保存子事务
