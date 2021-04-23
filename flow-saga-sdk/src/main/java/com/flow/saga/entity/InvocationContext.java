@@ -2,11 +2,6 @@ package com.flow.saga.entity;
 
 import java.lang.reflect.Method;
 
-/**
- * @author songzeqi
- *
- * 方法调用的封装，可以对方法调用的持久化
- */
 public class InvocationContext {
 
 	private Class<?> targetClass;
