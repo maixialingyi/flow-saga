@@ -3,6 +3,7 @@ package com.flow.saga.controller;
 import com.flow.saga.service.FlowSagaServiceRequestDTO;
 import com.flow.saga.service.TestExMainFlowSagaServiceImpl;
 import com.flow.saga.service.TestNormalMainFlowSagaServiceImpl;
+import com.flow.saga.service.TestRecoverServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class TestFlowSagaController {
 
     @Autowired
     private TestExMainFlowSagaServiceImpl testExMainFlowSagaServiceImpl;
+
+    @Autowired
+    private TestRecoverServiceImpl testRecoverService;
 
     @ApiOperation(value = "正常执行")
     @GetMapping("/testNormal")
@@ -36,10 +40,8 @@ public class TestFlowSagaController {
     }
 
     @ApiOperation(value = "恢复")
-    @GetMapping("/testRevocer")
+    @GetMapping("/testRecover")
     public Object testRevocer(){
-        FlowSagaServiceRequestDTO requestDTO = new FlowSagaServiceRequestDTO();
-        //return testNormalFlowSagaServiceImpl.testTransaction_main_1(requestDTO);
-        return null;
+        return testRecoverService.recvMessage();
     }
 }
