@@ -47,6 +47,6 @@ public class SagaTransactionRecoverManager extends BaseSagaTransactionManager {
     }
 
     public void release(SagaTransactionContext context) {
-        // 外层service已清理
+        // 外层SagaTransactionRecoverService中清理
     }
 }
