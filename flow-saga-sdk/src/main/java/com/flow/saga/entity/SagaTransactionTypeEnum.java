@@ -1,7 +1,7 @@
 package com.flow.saga.entity;
 
 /**
- * 事务执行失败后补偿类型
+ * 事务类型
  */
 
 public enum SagaTransactionTypeEnum {

@@ -78,7 +78,7 @@ public class SagaSubTransactionEntity {
     private InvocationContext successInvocationContext;
     private InvocationContext failInvocationContext;
     private InvocationContext rollbackInvocationContext;
-    private Class<? extends Exception>[] compensateExceptions;
+    private Class<? extends Exception>[] reExecuteExceptions;
     private Class<? extends Exception>[] rollbackExceptions;
 
     public void clearParam() {

@@ -90,7 +90,7 @@ public class SagaSubTransactionEntityInitFactory {
         sagaSubTransactionEntity.setParamValues(joinPoint.getArgs());
         sagaSubTransactionEntity.setReturnTypeJson(methodSignature.getReturnType().getName());
 
-        sagaSubTransactionEntity.setCompensateExceptions(sagaSubTransactionProcess.reExecuteExceptions());
+        sagaSubTransactionEntity.setReExecuteExceptions(sagaSubTransactionProcess.reExecuteExceptions());
         sagaSubTransactionEntity.setRollbackExceptions(sagaSubTransactionProcess.rollbackExceptions());
 
         sagaSubTransactionEntity.setSuccessInvocationContext(successInvocationContext);

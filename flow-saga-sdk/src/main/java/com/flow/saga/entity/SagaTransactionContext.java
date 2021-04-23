@@ -48,11 +48,11 @@ public class SagaTransactionContext {
     public boolean needRetryCheckAndAddRetryTime(Exception e) {
         // 先判断当前子事务的配置
         if (this.getCurrentSagaSubTransaction() != null
-                && this.getCurrentSagaSubTransaction().getCompensateExceptions() != null
-                && this.getCurrentSagaSubTransaction().getCompensateExceptions().length != 0) {
+                && this.getCurrentSagaSubTransaction().getReExecuteExceptions() != null
+                && this.getCurrentSagaSubTransaction().getReExecuteExceptions().length != 0) {
 
             return this.sagaTransactionEntity.needRetryCheckAndAddRetryTime(
-                    this.getCurrentSagaSubTransaction().getCompensateExceptions(),
+                    this.getCurrentSagaSubTransaction().getReExecuteExceptions(),
                     e,
                     this.sagaTransactionConfig.getRetryTime());
         }
@@ -67,11 +67,11 @@ public class SagaTransactionContext {
     public boolean isCompensateExceptionType(Exception e) {
         // 先判断子事务的配置
         if (this.getCurrentSagaSubTransaction() != null
-                && this.getCurrentSagaSubTransaction().getCompensateExceptions() != null
-                && this.getCurrentSagaSubTransaction().getCompensateExceptions().length != 0) {
+                && this.getCurrentSagaSubTransaction().getReExecuteExceptions() != null
+                && this.getCurrentSagaSubTransaction().getReExecuteExceptions().length != 0) {
 
             return this.sagaTransactionEntity.isCompensateExceptionType(
-                    this.getCurrentSagaSubTransaction().getCompensateExceptions(),e);
+                    this.getCurrentSagaSubTransaction().getReExecuteExceptions(),e);
         }
 
         return this.sagaTransactionEntity.isCompensateExceptionType(

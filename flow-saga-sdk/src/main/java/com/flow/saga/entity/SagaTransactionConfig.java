@@ -12,10 +12,10 @@ public class SagaTransactionConfig {
 
     private SagaTransactionTypeEnum sagaTransactionType;
 
-    // 补偿的重试次数
+    // 异常子事务重试次数
     private int retryTime;
 
-    // 补偿的重试时间间隔，单位秒
+    // 异常子事务重试时间间隔，单位秒
     private long retryInterval;
 
     private Class<? extends Exception>[] reExecuteExceptionList;

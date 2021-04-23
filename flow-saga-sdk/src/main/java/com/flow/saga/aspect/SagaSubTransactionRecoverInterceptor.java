@@ -40,7 +40,7 @@ public class SagaSubTransactionRecoverInterceptor {
             sagaSubTransactionEntity.initStatus();
             // 填充运行时动态信息
             sagaSubTransactionEntity.setRollbackExceptions(sagaSubTransactionProcess.rollbackExceptions());
-            sagaSubTransactionEntity.setCompensateExceptions(sagaSubTransactionProcess.reExecuteExceptions());
+            sagaSubTransactionEntity.setReExecuteExceptions(sagaSubTransactionProcess.reExecuteExceptions());
             sagaTransactionContext.setCurrentSagaSubTransaction(sagaSubTransactionEntity);
             sagaTransactionRecoverManager.updateSubTransaction(sagaSubTransactionEntity);
         } else {
