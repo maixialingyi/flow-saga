@@ -50,7 +50,9 @@ public class SagaSubTransactionRecoverInterceptor {
         }
 
         try {
+            //todo  有何区别
             Object object = joinPoint.proceed();
+            //Object object = joinPoint.proceed(sagaSubTransactionEntity.getAndConstructParamValues());
             sagaTransactionRecoverManager.commitSubTransaction(sagaSubTransactionEntity, object);
             sagaTransactionRecoverManager.successSubTransactionProcess(sagaSubTransactionEntity);
             return object;

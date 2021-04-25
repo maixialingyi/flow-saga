@@ -53,6 +53,10 @@ public class BaseSagaTransactionManager {
     }
 
     public void handleException(SagaTransactionContext context, Exception e) {
+        // 如果是内层的事务就直接返回
+        if (!isLastTransaction(context)) {
+            return;
+        }
         if (sagaProperties.isAsyncCancel()) {
             this.handleExceptionAsyn(context, e);
         } else {
@@ -61,10 +65,6 @@ public class BaseSagaTransactionManager {
     }
 
     public void handleExceptionSyn(SagaTransactionContext context, Exception e) {
-        // 如果是内层的事务就直接返回
-        if (!isLastTransaction(context)) {
-            return;
-        }
         SagaTransactionEntity sagaTransactionEntity = context.getSagaTransactionEntity();
         try {
             sagaTransactionExceptionHandlerDispatcher.handleException(context, e);
@@ -112,7 +112,7 @@ public class BaseSagaTransactionManager {
     }
 
     public void commitSubTransaction(SagaSubTransactionEntity sagaSubTransactionEntity, Object object) {
-
+        sagaSubTransactionEntity.setReturnValue(object);
         sagaSubTransactionEntity.setReturnValueJson(JsonUtil.toJson(object));
         sagaSubTransactionEntity.success();
         this.updateSagaSubTransaction(sagaSubTransactionEntity);
@@ -138,10 +138,10 @@ public class BaseSagaTransactionManager {
                 log.debug("[SagaSubTransactionProcess]子流程{}重试执行开始，执行次数{}, 业务流水号:{}",
                         sagaSubTransactionEntity.getSubTransactionName(), sagaTransactionEntity.getRetryTime(),
                         sagaSubTransactionEntity.getBizSerialNo());
-                Object object = joinPoint.proceed();
+                Object returnValue = joinPoint.proceed();
                 sagaSubTransactionEntity.success();
                 this.successUpdateSagaSubTransaction(sagaSubTransactionEntity);
-                return object;
+                return returnValue;
             } catch (Throwable e1) {
                 e = e1;
                 log.warn("[SagaSubTransactionProcess]子流程{}执行重试失败，执行次数{}, 业务流水号:{}",

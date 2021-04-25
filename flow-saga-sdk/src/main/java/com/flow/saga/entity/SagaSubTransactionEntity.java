@@ -75,6 +75,7 @@ public class SagaSubTransactionEntity {
      */
     private Class<?>[] paramTypes;
     private Object[] paramValues;
+    private Object returnValue;
     private InvocationContext successInvocationContext;
     private InvocationContext failInvocationContext;
     private InvocationContext rollbackInvocationContext;
